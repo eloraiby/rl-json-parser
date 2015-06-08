@@ -4,7 +4,7 @@
 /* First off, code is included that follows the "include" declaration
 ** in the input grammar file. */
 #include <stdio.h>
-#line 31 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 30 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -701,7 +701,7 @@ static void yy_reduce(
   */
       case 0: /* root ::= object */
       case 1: /* root ::= array */ yytestcase(yyruleno==1);
-#line 54 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 53 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { s->root = yymsp[0].minor.yy0; }
 #line 707 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
@@ -715,52 +715,52 @@ static void yy_reduce(
       case 18: /* value ::= none */ yytestcase(yyruleno==18);
       case 19: /* value ::= object */ yytestcase(yyruleno==19);
       case 20: /* value ::= array */ yytestcase(yyruleno==20);
-#line 58 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 57 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = yymsp[0].minor.yy0; }
 #line 721 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 6: /* pair ::= string JSON_TOK_COL value */
-#line 63 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 62 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_pair(yymsp[-2].minor.yy0, yymsp[0].minor.yy0); }
 #line 726 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 7: /* members ::= pair */
-#line 65 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 64 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_members(yymsp[0].minor.yy0, NULL); }
 #line 731 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 8: /* members ::= members JSON_TOK_COMMA pair */
-#line 66 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 65 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_members(yymsp[0].minor.yy0, yymsp[-2].minor.yy0);	}
 #line 736 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 9: /* object ::= JSON_TOK_LBRACK JSON_TOK_RBRACK */
-#line 68 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 67 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_object(NULL);	}
 #line 741 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 10: /* object ::= JSON_TOK_LBRACK members JSON_TOK_RBRACK */
-#line 69 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_object(yymsp[-1].minor.yy0); }
+#line 68 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy0 = json_make_object(yymsp[-1].minor.yy0); json_free_members(yymsp[-1].minor.yy0); }
 #line 746 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 11: /* array ::= JSON_TOK_LSQB JSON_TOK_RSQB */
-#line 71 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 70 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_array(NULL);	}
 #line 751 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 12: /* array ::= JSON_TOK_LSQB elements JSON_TOK_RSQB */
-#line 72 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_array(yymsp[-1].minor.yy0);	}
+#line 71 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy0 = json_make_array(yymsp[-1].minor.yy0); json_free_elements(yymsp[-1].minor.yy0); }
 #line 756 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 13: /* elements ::= value */
-#line 74 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 73 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_elements(yymsp[0].minor.yy0, NULL); }
 #line 761 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 14: /* elements ::= elements JSON_TOK_COMMA value */
-#line 75 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 74 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_elements(yymsp[0].minor.yy0, yymsp[-2].minor.yy0); }
 #line 766 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
@@ -824,7 +824,7 @@ static void yy_syntax_error(
 ){
   parserARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 40 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 39 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 
 	int i = 0;
 	int n = sizeof(yyTokenName) / sizeof(yyTokenName[0]);

@@ -41,10 +41,14 @@ typedef struct {
 
 json_pair_t*		json_make_pair		(json_value_t*, json_value_t*);
 json_members_t*		json_make_members	(json_pair_t*, json_members_t*);
+/** free the list and the pairs (keep the keys/values) */
+void				json_free_members	(json_members_t*);
 
 json_value_t*		json_make_object	(json_members_t*);
 
 json_elements_t*	json_make_elements	(json_value_t*, json_elements_t*);
+/** free the list (keep the values) */
+void				json_free_elements	(json_elements_t*);
 
 json_value_t*		json_make_array		(json_elements_t*);
 

@@ -70,7 +70,7 @@ json_members_to_array	(json_members_t* m) {
 /*
  * free the list and the pairs (keep the keys/values)
  */
-static void
+void
 json_free_members(json_members_t* m) {
 	json_members_t*	tmp	= NULL;
 
@@ -93,11 +93,33 @@ json_make_object	(json_members_t* m) {
 	json_value_t*	object	= (json_value_t*)malloc(sizeof(json_value_t));
 	object->tag	= JSON_OBJECT;
 	object->value.members	= json_members_to_array(m);
-	json_free_members(m);
 	return object;
 }
 
-json_elements_t*	json_make_elements	(json_value_t*, json_elements_t*);
+json_elements_t*
+json_make_elements	(json_value_t* v, json_elements_t* e) {
+	json_elements_t*	ne	= (json_elements_t*)malloc(sizeof(json_elements_t));
+	ne->value	= v;
+	ne->next	= e;
+	return ne;
+}
+
+/*
+ * free the list (keep the values)
+ */
+void
+json_free_elements(json_elements_t* e) {
+	json_elements_t*	tmp	= NULL;
+
+	while( e ) {
+		if ( e->next ) {
+			tmp	= e->next;
+		}
+
+		free(e);
+		e	= tmp;
+	}
+}
 
 json_value_t*		json_make_array		(json_elements_t*);
 

@@ -65,10 +65,10 @@ members(A)	::= pair(B).							{ A = json_make_members(B, NULL); }
 members(A)	::= members(B) JSON_TOK_COMMA pair(C).	{ A = json_make_members(C, B);	}
 
 object(A)	::= JSON_TOK_LBRACK JSON_TOK_RBRACK.			{ A = json_make_object(NULL);	}
-object(A)	::= JSON_TOK_LBRACK members(B) JSON_TOK_RBRACK.	{ A = json_make_object(B); }
+object(A)	::= JSON_TOK_LBRACK members(B) JSON_TOK_RBRACK.	{ A = json_make_object(B); json_free_members(B); }
 
 array(A)	::= JSON_TOK_LSQB JSON_TOK_RSQB.				{ A = json_make_array(NULL);	}
-array(A)	::= JSON_TOK_LSQB elements(B) JSON_TOK_RSQB.	{ A = json_make_array(B);	}
+array(A)	::= JSON_TOK_LSQB elements(B) JSON_TOK_RSQB.	{ A = json_make_array(B); json_free_elements(B); }
 
 elements(A)	::= value(B).				{ A = json_make_elements(B, NULL); }
 elements(A)	::= elements(B) JSON_TOK_COMMA value(C).	{ A = json_make_elements(C, B); }
