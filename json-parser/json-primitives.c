@@ -38,12 +38,62 @@ json_make_members	(json_pair_t* p, json_members_t* m) {
 	return nm;
 }
 
+static int
+json_members_count	(json_members_t* m) {
+	int	count	= 0;
+	while( m ) {
+		++count;
+		m	= m->next;
+	}
+	return count;
+}
+
+static json_pair_t*
+json_members_to_array	(json_members_t* m) {
+	if ( m ) {
+		int				count	= json_members_count(m);
+		json_pair_t*	pairs	= (json_pair_t*)malloc(sizeof(json_pair_t) * count);
+		int				index	= 0;
+
+		while( m ) {
+			pairs[index]	= *(m->value);
+			m	= m->next;
+			++index;
+		}
+
+		return pairs;
+	} else {
+		return NULL;
+	}
+}
+
+/*
+ * free the list and the pairs (keep the keys/values)
+ */
+static void
+json_free_members(json_members_t* m) {
+	json_members_t*	tmp	= NULL;
+
+	while( m ) {
+		if ( m->next ) {
+			tmp	= m->next;
+		}
+
+		if( m->value ) {
+			free(m->value);
+		}
+
+		free(m);
+		m	= tmp;
+	}
+}
+
 json_value_t*
 json_make_object	(json_members_t* m) {
 	json_value_t*	object	= (json_value_t*)malloc(sizeof(json_value_t));
 	object->tag	= JSON_OBJECT;
-	object->value.members	= members_to_array(m);
-	free_members(m);
+	object->value.members	= json_members_to_array(m);
+	json_free_members(m);
 	return object;
 }
 
