@@ -1,0 +1,10 @@
+#define JSON_TOK_STRING                  1
+#define JSON_TOK_NUMBER                  2
+#define JSON_TOK_BOOLEAN                 3
+#define JSON_TOK_NONE                    4
+#define JSON_TOK_COL                     5
+#define JSON_TOK_COMMA                   6
+#define JSON_TOK_LBRACK                  7
+#define JSON_TOK_RBRACK                  8
+#define JSON_TOK_LSQB                    9
+#define JSON_TOK_RSQB                   10
