@@ -8,6 +8,7 @@ QT       -= core gui
 
 TARGET = json-parser
 TEMPLATE = lib
+CONFIG += staticlib
 
 DEFINES += JSONPARSER_LIBRARY
 

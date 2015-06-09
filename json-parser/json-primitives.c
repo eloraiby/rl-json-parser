@@ -18,14 +18,16 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "./private/private.h"
 
 json_pair_t*
 json_make_pair		(json_value_t* key, json_value_t* value) {
+	assert(key->tag == JSON_STRING);
 	json_pair_t*	pair	= (json_pair_t*)malloc(sizeof(json_pair_t));
-	pair->key	= key;
+	pair->key	= key->value.string;
 	pair->value	= value;
 	return pair;
 }
@@ -108,7 +110,7 @@ json_make_elements	(json_value_t* v, json_elements_t* e) {
  * free the list (keep the values)
  */
 void
-json_free_elements(json_elements_t* e) {
+json_free_elements	(json_elements_t* e) {
 	json_elements_t*	tmp	= NULL;
 
 	while( e ) {
@@ -121,9 +123,68 @@ json_free_elements(json_elements_t* e) {
 	}
 }
 
-json_value_t*		json_make_array		(json_elements_t*);
+static int
+json_elements_count	(json_elements_t* e) {
+	int	count	= 0;
+	while( e ) {
+		++count;
+		e	= e->next;
+	}
+	return count;
+}
 
-json_value_t*		json_boolean		(bool);
-json_value_t*		json_number			(double);
-json_value_t*		json_string			(const char*);
-json_value_t*		json_none			();
+json_value_t*
+json_make_array		(json_elements_t* e) {
+	json_value_t*	arr	= (json_value_t*)malloc(sizeof(json_value_t));
+	arr->tag	= JSON_ARRAY;
+
+	if ( e ) {
+		int				count	= json_elements_count(e);
+		json_value_t**	values	= (json_value_t**)malloc(sizeof(json_value_t*) * count);
+		int				index	= 0;
+
+		while( e ) {
+			values[index]	= e->value;
+			e	= e->next;
+			++index;
+		}
+
+		arr->value.array	= values;
+	} else {
+		arr->value.array	= NULL;
+	}
+
+	return arr;
+}
+
+json_value_t*
+json_boolean		(bool b) {
+	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+	ret->tag	= JSON_BOOLEAN;
+	ret->value.boolean	= b;
+	return ret;
+}
+
+json_value_t*
+json_number			(double n) {
+	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+	ret->tag	= JSON_NUMBER;
+	ret->value.number	= n;
+	return ret;
+}
+
+json_value_t*
+json_string			(const char* str) {
+	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+	ret->tag	= JSON_STRING;
+	ret->value.string	= (char*)malloc(strlen(str) + 1);
+	memcpy(ret->value.string, str, strlen(str) + 1);
+	return ret;
+}
+
+json_value_t*
+json_none			()  {
+	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+	ret->tag	= JSON_NONE;
+	return ret;
+}

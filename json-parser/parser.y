@@ -24,7 +24,7 @@
 
 %name parser
 
-%token_type	{ json_value_t* }
+/*%token_type	{ void* }*/
 %extra_argument { json_parser_t* s }
 
 %include {
@@ -46,6 +46,12 @@
 		}
 	}
 }
+
+%type pair		{ json_pair_t* }
+%type memnbers	{ json_members_t* }
+%type elements	{ json_elements_t* }
+%type object	{ json_value_t* }
+%type value		{ json_value_t* }
 
 %start_symbol root
 

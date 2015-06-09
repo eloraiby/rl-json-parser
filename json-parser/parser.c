@@ -63,12 +63,16 @@
 **                       defined, then do no error processing.
 */
 #define YYCODETYPE unsigned char
-#define YYNOCODE 24
+#define YYNOCODE 25
 #define YYACTIONTYPE unsigned char
-#define parserTOKENTYPE  json_value_t* 
+#define parserTOKENTYPE void*
 typedef union {
   int yyinit;
   parserTOKENTYPE yy0;
+  json_elements_t* yy4;
+  json_pair_t* yy7;
+  json_members_t* yy30;
+  json_value_t* yy44;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
@@ -147,39 +151,37 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **                     shifting non-terminals after a reduce.
 **  yy_default[]       Default action for each state.
 */
-#define YY_ACTTAB_COUNT (61)
+#define YY_ACTTAB_COUNT (60)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */    17,   16,   21,   20,   19,   18,    5,   15,   12,    7,
- /*    10 */    17,   16,   21,   20,   19,   18,   30,   25,   17,   16,
- /*    20 */    21,   20,   19,   18,   29,   22,    3,   29,   28,   27,
- /*    30 */    26,   11,    4,    4,    1,    1,   24,   29,   28,   27,
- /*    40 */    26,   29,   53,    4,    8,    1,   31,   53,   14,   53,
- /*    50 */     6,   52,   10,    9,   53,    2,    8,   53,   53,   23,
- /*    60 */    13,
+ /*     0 */     7,   17,   15,   30,   16,   21,   20,   19,   18,   17,
+ /*    10 */    25,   31,   16,   21,   20,   19,   18,   17,   22,    3,
+ /*    20 */    16,   21,   20,   19,   18,   29,   28,   27,   26,   29,
+ /*    30 */     4,    4,    1,    1,   24,   29,   28,   27,   26,   14,
+ /*    40 */    53,    4,   53,    1,    2,    5,    8,   12,   23,   13,
+ /*    50 */     6,   10,   29,   52,    9,   53,    8,   53,   53,   11,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */    13,   14,   15,   16,   17,   18,    6,   20,    8,   22,
- /*    10 */    13,   14,   15,   16,   17,   18,    0,   20,   13,   14,
- /*    20 */    15,   16,   17,   18,    1,   20,    5,    1,    2,    3,
- /*    30 */     4,    8,    7,    7,    9,    9,   10,    1,    2,    3,
- /*    40 */     4,    1,   23,    7,   15,    9,    0,   23,   19,   23,
- /*    50 */    21,   12,   13,   14,   23,    6,   15,   23,   23,   10,
- /*    60 */    19,
+ /*     0 */    14,   15,   16,    0,   18,   19,   20,   21,   22,   15,
+ /*    10 */    16,    0,   18,   19,   20,   21,   22,   15,   16,    5,
+ /*    20 */    18,   19,   20,   21,   22,    1,    2,    3,    4,    1,
+ /*    30 */     7,    7,    9,    9,   10,    1,    2,    3,    4,   12,
+ /*    40 */    24,    7,   24,    9,    6,    6,   19,    8,   10,   12,
+ /*    50 */    23,   15,    1,   17,   18,   24,   19,   24,   24,    8,
 };
 #define YY_SHIFT_USE_DFLT (-1)
 #define YY_SHIFT_COUNT (10)
 #define YY_SHIFT_MIN   (0)
-#define YY_SHIFT_MAX   (49)
+#define YY_SHIFT_MAX   (51)
 static const signed char yy_shift_ofst[] = {
- /*     0 */    25,   26,   36,   36,   23,   40,    0,   49,   21,   46,
- /*    10 */    16,
+ /*     0 */    23,   24,   34,   34,   51,   28,   39,   38,   14,   11,
+ /*    10 */     3,
 };
-#define YY_REDUCE_USE_DFLT (-14)
+#define YY_REDUCE_USE_DFLT (-15)
 #define YY_REDUCE_COUNT (5)
-#define YY_REDUCE_MIN   (-13)
-#define YY_REDUCE_MAX   (41)
+#define YY_REDUCE_MIN   (-14)
+#define YY_REDUCE_MAX   (37)
 static const signed char yy_reduce_ofst[] = {
- /*     0 */    39,  -13,    5,   -3,   29,   41,
+ /*     0 */    36,  -14,    2,   -6,   27,   37,
 };
 static const YYACTIONTYPE yy_default[] = {
  /*     0 */    51,   51,   51,   51,   51,   51,   51,   51,   51,   51,
@@ -280,9 +282,9 @@ static const char *const yyTokenName[] = {
   "$",             "JSON_TOK_STRING",  "JSON_TOK_NUMBER",  "JSON_TOK_BOOLEAN",
   "JSON_TOK_NONE",  "JSON_TOK_COL",  "JSON_TOK_COMMA",  "JSON_TOK_LBRACK",
   "JSON_TOK_RBRACK",  "JSON_TOK_LSQB",  "JSON_TOK_RSQB",  "error",       
-  "root",          "object",        "array",         "string",      
-  "number",        "boolean",       "none",          "pair",        
-  "value",         "members",       "elements",    
+  "pair",          "memnbers",      "elements",      "object",      
+  "value",         "root",          "array",         "string",      
+  "number",        "boolean",       "none",          "members",     
 };
 #endif /* NDEBUG */
 
@@ -624,27 +626,27 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
-  { 12, 1 },
-  { 12, 1 },
-  { 15, 1 },
-  { 16, 1 },
   { 17, 1 },
-  { 18, 1 },
-  { 19, 3 },
+  { 17, 1 },
+  { 19, 1 },
+  { 20, 1 },
   { 21, 1 },
-  { 21, 3 },
-  { 13, 2 },
-  { 13, 3 },
-  { 14, 2 },
-  { 14, 3 },
   { 22, 1 },
-  { 22, 3 },
-  { 20, 1 },
-  { 20, 1 },
-  { 20, 1 },
-  { 20, 1 },
-  { 20, 1 },
-  { 20, 1 },
+  { 12, 3 },
+  { 23, 1 },
+  { 23, 3 },
+  { 15, 2 },
+  { 15, 3 },
+  { 18, 2 },
+  { 18, 3 },
+  { 14, 1 },
+  { 14, 3 },
+  { 16, 1 },
+  { 16, 1 },
+  { 16, 1 },
+  { 16, 1 },
+  { 16, 1 },
+  { 16, 1 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -700,69 +702,81 @@ static void yy_reduce(
   **     break;
   */
       case 0: /* root ::= object */
-      case 1: /* root ::= array */ yytestcase(yyruleno==1);
-#line 53 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 59 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ s->root = yymsp[0].minor.yy44; }
+#line 708 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+        break;
+      case 1: /* root ::= array */
+#line 60 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { s->root = yymsp[0].minor.yy0; }
-#line 707 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 713 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 2: /* string ::= JSON_TOK_STRING */
       case 3: /* number ::= JSON_TOK_NUMBER */ yytestcase(yyruleno==3);
       case 4: /* boolean ::= JSON_TOK_BOOLEAN */ yytestcase(yyruleno==4);
       case 5: /* none ::= JSON_TOK_NONE */ yytestcase(yyruleno==5);
-      case 15: /* value ::= string */ yytestcase(yyruleno==15);
-      case 16: /* value ::= number */ yytestcase(yyruleno==16);
-      case 17: /* value ::= boolean */ yytestcase(yyruleno==17);
-      case 18: /* value ::= none */ yytestcase(yyruleno==18);
-      case 19: /* value ::= object */ yytestcase(yyruleno==19);
-      case 20: /* value ::= array */ yytestcase(yyruleno==20);
-#line 57 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 63 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = yymsp[0].minor.yy0; }
 #line 721 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 6: /* pair ::= string JSON_TOK_COL value */
-#line 62 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_pair(yymsp[-2].minor.yy0, yymsp[0].minor.yy0); }
+#line 68 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy7 = json_make_pair(yymsp[-2].minor.yy0, yymsp[0].minor.yy44); }
 #line 726 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 7: /* members ::= pair */
-#line 64 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy0, NULL); }
+#line 70 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, NULL); }
 #line 731 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 8: /* members ::= members JSON_TOK_COMMA pair */
-#line 65 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy0, yymsp[-2].minor.yy0);	}
+#line 71 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, yymsp[-2].minor.yy0);	}
 #line 736 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 9: /* object ::= JSON_TOK_LBRACK JSON_TOK_RBRACK */
-#line 67 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_object(NULL);	}
+#line 73 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy44 = json_make_object(NULL);	}
 #line 741 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 10: /* object ::= JSON_TOK_LBRACK members JSON_TOK_RBRACK */
-#line 68 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_object(yymsp[-1].minor.yy0); json_free_members(yymsp[-1].minor.yy0); }
+#line 74 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy44 = json_make_object(yymsp[-1].minor.yy0); json_free_members(yymsp[-1].minor.yy0); }
 #line 746 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 11: /* array ::= JSON_TOK_LSQB JSON_TOK_RSQB */
-#line 70 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 76 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_array(NULL);	}
 #line 751 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 12: /* array ::= JSON_TOK_LSQB elements JSON_TOK_RSQB */
-#line 71 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_array(yymsp[-1].minor.yy0); json_free_elements(yymsp[-1].minor.yy0); }
+#line 77 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy0 = json_make_array(yymsp[-1].minor.yy4); json_free_elements(yymsp[-1].minor.yy4); }
 #line 756 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 13: /* elements ::= value */
-#line 73 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_elements(yymsp[0].minor.yy0, NULL); }
+#line 79 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy4 = json_make_elements(yymsp[0].minor.yy44, NULL); }
 #line 761 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       case 14: /* elements ::= elements JSON_TOK_COMMA value */
-#line 74 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_elements(yymsp[0].minor.yy0, yymsp[-2].minor.yy0); }
+#line 80 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy4 = json_make_elements(yymsp[0].minor.yy44, yymsp[-2].minor.yy4); }
 #line 766 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+        break;
+      case 15: /* value ::= string */
+      case 16: /* value ::= number */ yytestcase(yyruleno==16);
+      case 17: /* value ::= boolean */ yytestcase(yyruleno==17);
+      case 18: /* value ::= none */ yytestcase(yyruleno==18);
+      case 20: /* value ::= array */ yytestcase(yyruleno==20);
+#line 82 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy44 = yymsp[0].minor.yy0; }
+#line 775 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+        break;
+      case 19: /* value ::= object */
+#line 86 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy44 = yymsp[0].minor.yy44; }
+#line 780 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
         break;
       default:
         break;
@@ -834,7 +848,7 @@ static void yy_syntax_error(
 			printf("possible token: %s\n", yyTokenName[i]);
 		}
 	}
-#line 838 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 852 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
   parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
