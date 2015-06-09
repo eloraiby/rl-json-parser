@@ -4,7 +4,7 @@
 /* First off, code is included that follows the "include" declaration
 ** in the input grammar file. */
 #include <stdio.h>
-#line 30 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 30 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +12,7 @@
 
 #include "parser.h"
 #include "private/private.h"
-#line 16 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 16 "/home/aifu/Projects/json-parser/json-parser/parser.c"
 /* Next is all token values, in a form suitable for use by makeheaders.
 ** This section will be null unless lemon is run with the -m switch.
 */
@@ -77,10 +77,10 @@ typedef union {
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
 #endif
-#define parserARG_SDECL  json_parser_t* s ;
-#define parserARG_PDECL , json_parser_t* s 
-#define parserARG_FETCH  json_parser_t* s  = yypParser->s 
-#define parserARG_STORE yypParser->s  = s 
+#define parserARG_SDECL  json_parser_t* pret ;
+#define parserARG_PDECL , json_parser_t* pret 
+#define parserARG_FETCH  json_parser_t* pret  = yypParser->pret 
+#define parserARG_STORE yypParser->pret  = pret 
 #define YYNSTATE 30
 #define YYNRULE 21
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
@@ -702,81 +702,81 @@ static void yy_reduce(
   **     break;
   */
       case 0: /* root ::= object */
-#line 59 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ s->root = yymsp[0].minor.yy44; }
-#line 708 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 61 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ pret->root = yymsp[0].minor.yy44; }
+#line 708 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 1: /* root ::= array */
-#line 60 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
-{ s->root = yymsp[0].minor.yy0; }
-#line 713 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 62 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ pret->root = yymsp[0].minor.yy0; }
+#line 713 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 2: /* string ::= JSON_TOK_STRING */
       case 3: /* number ::= JSON_TOK_NUMBER */ yytestcase(yyruleno==3);
       case 4: /* boolean ::= JSON_TOK_BOOLEAN */ yytestcase(yyruleno==4);
       case 5: /* none ::= JSON_TOK_NONE */ yytestcase(yyruleno==5);
-#line 63 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 65 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = yymsp[0].minor.yy0; }
-#line 721 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 721 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 6: /* pair ::= string JSON_TOK_COL value */
-#line 68 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 70 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy7 = json_make_pair(yymsp[-2].minor.yy0, yymsp[0].minor.yy44); }
-#line 726 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 726 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 7: /* members ::= pair */
-#line 70 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 72 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, NULL); }
-#line 731 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 731 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 8: /* members ::= members JSON_TOK_COMMA pair */
-#line 71 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 73 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, yymsp[-2].minor.yy0);	}
-#line 736 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 736 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 9: /* object ::= JSON_TOK_LBRACK JSON_TOK_RBRACK */
-#line 73 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 75 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy44 = json_make_object(NULL);	}
-#line 741 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 741 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 10: /* object ::= JSON_TOK_LBRACK members JSON_TOK_RBRACK */
-#line 74 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 76 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy44 = json_make_object(yymsp[-1].minor.yy0); json_free_members(yymsp[-1].minor.yy0); }
-#line 746 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 746 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 11: /* array ::= JSON_TOK_LSQB JSON_TOK_RSQB */
-#line 76 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 78 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_array(NULL);	}
-#line 751 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 751 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 12: /* array ::= JSON_TOK_LSQB elements JSON_TOK_RSQB */
-#line 77 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 79 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = json_make_array(yymsp[-1].minor.yy4); json_free_elements(yymsp[-1].minor.yy4); }
-#line 756 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 756 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 13: /* elements ::= value */
-#line 79 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 81 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy4 = json_make_elements(yymsp[0].minor.yy44, NULL); }
-#line 761 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 761 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 14: /* elements ::= elements JSON_TOK_COMMA value */
-#line 80 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 82 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy4 = json_make_elements(yymsp[0].minor.yy44, yymsp[-2].minor.yy4); }
-#line 766 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 766 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 15: /* value ::= string */
       case 16: /* value ::= number */ yytestcase(yyruleno==16);
       case 17: /* value ::= boolean */ yytestcase(yyruleno==17);
       case 18: /* value ::= none */ yytestcase(yyruleno==18);
       case 20: /* value ::= array */ yytestcase(yyruleno==20);
-#line 82 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 84 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy44 = yymsp[0].minor.yy0; }
-#line 775 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 775 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 19: /* value ::= object */
-#line 86 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 88 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy44 = yymsp[0].minor.yy44; }
-#line 780 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+#line 780 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       default:
         break;
@@ -838,9 +838,9 @@ static void yy_syntax_error(
 ){
   parserARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 39 "C:/Users/Wael/Projects/json-parser/json-parser/parser.y"
+#line 39 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 
-	int i = 0;
+/*	int i = 0;
 	int n = sizeof(yyTokenName) / sizeof(yyTokenName[0]);
 	for ( i = 0; i < n; ++i) {
 		int a = yy_find_shift_action(yypParser, (YYCODETYPE)i);
@@ -848,7 +848,9 @@ static void yy_syntax_error(
 			printf("possible token: %s\n", yyTokenName[i]);
 		}
 	}
-#line 852 "C:/Users/Wael/Projects/json-parser/json-parser/parser.c"
+*/
+fprintf(stderr, "error starting @: %s", pret->token_start);
+#line 854 "/home/aifu/Projects/json-parser/json-parser/parser.c"
   parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
