@@ -50,20 +50,30 @@ typedef enum {
 struct json_value_s;
 
 typedef struct {
-	char*				key;
+	char*			key;
 	struct json_value_s*	value;
 } json_pair_t;
+
+typedef struct {
+	int			count;
+	struct json_value_s**	values;
+} json_value_array_t;
+
+typedef struct {
+	int			count;
+	json_pair_t*		pairs;
+} json_pair_array_t;
 
 typedef struct json_value_s {
 	JSON_TYPE			tag;
 
 	union {
-		bool				boolean;
-		char*				string;
-		double				number;
-		json_pair_t			pair;
-		json_pair_t*		members;
-		struct json_value_s**	array;
+		bool			boolean;
+		char*			string;
+		double			number;
+		json_pair_t		pair;
+		json_pair_array_t	members;
+		json_value_array_t	array;
 	} value;
 } json_value_t;
 

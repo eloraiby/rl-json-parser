@@ -50,23 +50,26 @@ json_members_count	(json_members_t* m) {
 	return count;
 }
 
-static json_pair_t*
+static json_pair_array_t
 json_members_to_array	(json_members_t* m) {
+	json_pair_array_t	parr;
+
 	if ( m ) {
-		int				count	= json_members_count(m);
-		json_pair_t*	pairs	= (json_pair_t*)malloc(sizeof(json_pair_t) * count);
-		int				index	= 0;
+		parr.count	= json_members_count(m);
+		parr.pairs	= (json_pair_t*)malloc(sizeof(json_pair_t) * parr.count);
+		int	index	= 0;
 
 		while( m ) {
-			pairs[index]	= *(m->value);
-			m	= m->next;
+			parr.pairs[index]	= *(m->value);
+			m			= m->next;
 			++index;
 		}
 
-		return pairs;
 	} else {
-		return NULL;
+		parr.count	= 0;
+		parr.pairs	= NULL;
 	}
+	return parr;
 }
 
 /*
@@ -134,24 +137,24 @@ json_elements_count	(json_elements_t* e) {
 }
 
 json_value_t*
-json_make_array		(json_elements_t* e) {
+json_make_array(json_elements_t* e) {
 	json_value_t*	arr	= (json_value_t*)malloc(sizeof(json_value_t));
 	arr->tag	= JSON_ARRAY;
 
 	if ( e ) {
-		int				count	= json_elements_count(e);
-		json_value_t**	values	= (json_value_t**)malloc(sizeof(json_value_t*) * count);
+		arr->value.array.count	= json_elements_count(e);
+		arr->value.array.values	= (json_value_t**)malloc(sizeof(json_value_t*) * arr->value.array.count);
 		int				index	= 0;
 
 		while( e ) {
-			values[index]	= e->value;
+			arr->value.array.values[index]	= e->value;
 			e	= e->next;
 			++index;
 		}
 
-		arr->value.array	= values;
 	} else {
-		arr->value.array	= NULL;
+		arr->value.array.count	= 0;
+		arr->value.array.values	= NULL;
 	}
 
 	return arr;

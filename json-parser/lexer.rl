@@ -28,31 +28,15 @@
 #include "parser.h"
 
 extern void*	parser_alloc(void *(*mallocProc)(size_t));
-extern void		parser_free(void *p, void (*freeProc)(void*));
-extern void		parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_parser_t* s);
-
-static const char*	debug_tok[] = {
-	NULL,
-	"JSON_TOK_STRING ",
-	"JSON_TOK_NUMBER ",
-	"JSON_TOK_BOOLEAN",
-	"JSON_TOK_NONE   ",
-	"JSON_TOK_COL    ",
-	"JSON_TOK_COMMA  ",
-	"JSON_TOK_LBRACK ",
-	"JSON_TOK_RBRACK ",
-	"JSON_TOK_LSQB   ",
-	"JSON_TOK_RSQB   ",
-};
+extern void	parser_free(void *p, void (*freeProc)(void*));
+extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_parser_t* s);
 
 
-#define ADVANCE_OP(A, T)	parser_.token_start	= ts; \
+#define ADVANCE(A, T)	parser_.token_start	= ts; \
 			parser_.token_end	= te; \
 			parser_.token_line	= line; \
 			copy_token(ts, te, tmp); \
 			json_value_t* tmpc = token_to_##A(tmp); \
-			fprintf(stderr, "%d - %s\n", T, debug_tok[T]); \
-			assert(T != 0); \
 			parser_advance(yyparser, T, tmpc, &parser_)
 
 #define ADVANCE_TOKEN(A)	parser_advance(yyparser, A, NULL, &parser_)
@@ -81,23 +65,23 @@ static const char*	debug_tok[] = {
 	c_comment	:= (any | '\n'@inc_line)* :>> '*/' @{ fgoto main; };
 
 	main := |*
-		'true'						{ ADVANCE_OP( boolean, JSON_TOK_BOOLEAN );};
-		'false'						{ ADVANCE_OP( boolean, JSON_TOK_BOOLEAN );};
-		'none'						{ ADVANCE_OP( none, JSON_TOK_NONE ); };
+		'true'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
+		'false'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
+		'none'						{ ADVANCE( none, JSON_TOK_NONE ); };
 
 		# string.
 		( '"' ( [^"\\\n] | /\\./ )* '"' )		{
 									PUSH_TE();
 									PUSH_TS();
 									++ts; --te;
-									ADVANCE_OP( string, JSON_TOK_STRING );
+									ADVANCE( string, JSON_TOK_STRING );
 									POP_TS();
 									POP_TE();
 								};
 
 
 		# Integer decimal. Leading part buffered by float.
-		( [+\-]? ( '0' | [1-9] [0-9]* ) )		{ ADVANCE_OP( number, JSON_TOK_NUMBER ); };
+		( [+\-]? ( '0' | [1-9] [0-9]* ) )		{ ADVANCE( number, JSON_TOK_NUMBER ); };
 
 		( [+\-]? ( '0' | [1-9] [0-9]* ) [a-zA-Z_]+ )	{
 									fprintf(stderr, "Error: invalid number:\n    ");
@@ -110,7 +94,7 @@ static const char*	debug_tok[] = {
 								};
 
 		# Floating literals.
-		( [+\-]? fract_const exponent? | [+\-]? digit+ exponent ) 	{ ADVANCE_OP( number, JSON_TOK_NUMBER );};
+		( [+\-]? fract_const exponent? | [+\-]? digit+ exponent ) 	{ ADVANCE( number, JSON_TOK_NUMBER );};
 
 		# Only buffer the second item, first buffered by symbol. */
 		'{'						{ ADVANCE_TOKEN( JSON_TOK_LBRACK );};
