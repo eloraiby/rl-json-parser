@@ -67,6 +67,7 @@ typedef struct json_value_s {
 	} value;
 } json_value_t;
 
+extern json_value_t*	json_parse(const char* str);
 #ifdef __cplusplus
 }
 #endif

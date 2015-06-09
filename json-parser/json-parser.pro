@@ -10,8 +10,6 @@ TARGET = json-parser
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += JSONPARSER_LIBRARY
-
 lexer.target = lexer.c
 lexer.commands = ragel -C -o $$PWD/lexer.c $$PWD/lexer.rl
 lexer.depends =

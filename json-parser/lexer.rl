@@ -161,7 +161,7 @@ token_to_none(const char* str) {
 
 
 json_value_t*
-parse(const char* str)
+json_parse(const char* str)
 {
 	json_parser_t		parser_;
 
