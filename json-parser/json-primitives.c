@@ -57,12 +57,12 @@ json_members_to_array	(json_members_t* m) {
 	if ( m ) {
 		parr.count	= json_members_count(m);
 		parr.pairs	= (json_pair_t*)malloc(sizeof(json_pair_t) * parr.count);
-		int	index	= 0;
+		int	index	= parr.count - 1;
 
 		while( m ) {
 			parr.pairs[index]	= *(m->value);
 			m			= m->next;
-			++index;
+			--index;
 		}
 
 	} else {
@@ -140,12 +140,12 @@ json_make_array(json_elements_t* e) {
 	if ( e ) {
 		arr->value.array.count	= json_elements_count(e);
 		arr->value.array.values	= (json_value_t**)malloc(sizeof(json_value_t*) * arr->value.array.count);
-		int				index	= 0;
+		int		index	= arr->value.array.count - 1;
 
 		while( e ) {
 			arr->value.array.values[index]	= e->value;
 			e	= e->next;
-			++index;
+			--index;
 		}
 
 	} else {
