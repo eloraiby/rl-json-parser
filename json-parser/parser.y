@@ -67,10 +67,10 @@ number(A)	::= JSON_TOK_NUMBER(B).		{ A = B; }
 boolean(A)	::= JSON_TOK_BOOLEAN(B).	{ A = B; }
 none(A)		::= JSON_TOK_NONE(B).		{ A = B; }
 
-pair(A)		::= string(B) JSON_TOK_COL value(C).	{ A = json_make_pair(B, C); }
+pair(A)		::= string(B) JSON_TOK_COL value(C).	{ A = json_make_pair(B, C); free(B); }
 
 members(A)	::= pair(B).				{ A = json_make_members(B, NULL); }
-members(A)	::= members(B) JSON_TOK_COMMA pair(C).	{ A = json_make_members(C, B);	}
+members(A)	::= members(B) JSON_TOK_COMMA pair(C).	{ A = json_make_members(C, B); }
 
 object(A)	::= JSON_TOK_LBRACK JSON_TOK_RBRACK.	{ A = json_make_object(NULL);	}
 object(A)	::= JSON_TOK_LBRACK members(B) JSON_TOK_RBRACK.	{ A = json_make_object(B); json_free_members(B); }

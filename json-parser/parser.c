@@ -721,7 +721,7 @@ static void yy_reduce(
         break;
       case 6: /* pair ::= string JSON_TOK_COL value */
 #line 70 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy7 = json_make_pair(yymsp[-2].minor.yy0, yymsp[0].minor.yy44); }
+{ yygotominor.yy7 = json_make_pair(yymsp[-2].minor.yy0, yymsp[0].minor.yy44); free(yymsp[-2].minor.yy0); }
 #line 726 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 7: /* members ::= pair */
@@ -731,7 +731,7 @@ static void yy_reduce(
         break;
       case 8: /* members ::= members JSON_TOK_COMMA pair */
 #line 73 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, yymsp[-2].minor.yy0);	}
+{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, yymsp[-2].minor.yy0); }
 #line 736 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 9: /* object ::= JSON_TOK_LBRACK JSON_TOK_RBRACK */
