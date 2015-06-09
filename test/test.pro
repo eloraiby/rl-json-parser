@@ -12,6 +12,7 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+QMAKE_CFLAGS	+= -std=c99
 
 SOURCES += \
     main.c

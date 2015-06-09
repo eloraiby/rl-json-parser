@@ -10,6 +10,8 @@ TARGET = json-parser
 TEMPLATE = lib
 CONFIG += staticlib
 
+QMAKE_CFLAGS	+= -std=c99
+
 lexer.target = lexer.c
 lexer.commands = ragel -C -o $$PWD/lexer.c $$PWD/lexer.rl
 lexer.depends =
