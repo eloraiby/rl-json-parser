@@ -80,9 +80,7 @@ json_free_members(json_members_t* m) {
 	json_members_t*	tmp	= NULL;
 
 	while( m ) {
-		if ( m->next ) {
-			tmp	= m->next;
-		}
+		tmp	= m->next;
 
 		if( m->value ) {
 			free(m->value);
@@ -117,9 +115,7 @@ json_free_elements	(json_elements_t* e) {
 	json_elements_t*	tmp	= NULL;
 
 	while( e ) {
-		if ( e->next ) {
-			tmp	= e->next;
-		}
+		tmp	= e->next;
 
 		free(e);
 		e	= tmp;
