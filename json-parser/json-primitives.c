@@ -174,7 +174,6 @@ json_number			(double n) {
 
 json_value_t*
 json_string			(const char* str) {
-	printf("allocating for: %s\n", str);
 	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
 	ret->tag	= JSON_STRING;
 	ret->value.string	= (char*)malloc(strlen(str) + 1);
@@ -193,7 +192,6 @@ void
 json_free(json_value_t* v) {
 	switch( v->tag ) {
 	case JSON_STRING:
-		printf("freeing: %s\n", v->value.string);
 		free(v->value.string);
 		break;
 
@@ -202,7 +200,6 @@ json_free(json_value_t* v) {
 
 	case JSON_OBJECT:
 		for( int c = 0; c < v->value.members.count; ++c ) {
-			printf("freeing: %s\n", v->value.members.pairs[c].key);
 			free(v->value.members.pairs[c].key);
 			json_free(v->value.members.pairs[c].value);
 		}

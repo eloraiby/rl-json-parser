@@ -37,16 +37,7 @@
 }
 
 %syntax_error {
-/*	int i = 0;
-	int n = sizeof(yyTokenName) / sizeof(yyTokenName[0]);
-	for ( i = 0; i < n; ++i) {
-		int a = yy_find_shift_action(yypParser, (YYCODETYPE)i);
-		if (a < YYNSTATE + YYNRULE) {
-			printf("possible token: %s\n", yyTokenName[i]);
-		}
-	}
-*/
-fprintf(stderr, "error starting @: %s", pret->token_start);
+	fprintf(stderr, "error starting @: %s", pret->token_start);
 }
 
 %type pair	{ json_pair_t* }

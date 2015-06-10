@@ -67,7 +67,7 @@ extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_p
 	main := |*
 		'true'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
 		'false'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
-		'none'						{ ADVANCE( none, JSON_TOK_NONE ); };
+		'null'						{ ADVANCE( none, JSON_TOK_NONE ); };
 
 		# string.
 		( '"' ( [^"\\\n] | /\\./ )* '"' )		{
