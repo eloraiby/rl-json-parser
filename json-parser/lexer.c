@@ -536,7 +536,7 @@ _again:
 	if ( cs == scanner_error ) {
 		/* Machine failed before finding a token. */
 		printf("PARSE ERROR\n");
-		exit(1);
+		return parser_.root;	/* failed! */
 	}
 
 	parser_advance(yyparser, 0, NULL, &parser_);
