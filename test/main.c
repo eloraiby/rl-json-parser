@@ -82,9 +82,36 @@ test_simple_object2() {
 	json_free(val);
 }
 
+char*
+load_file(const char* filename) {
+	FILE*	f = fopen(filename, "rb");
+	if( f ) {
+		fseek(f, 0, SEEK_END);
+		size_t	size	= ftell(f);
+		fseek(f, 0, SEEK_SET);
+		char*	buffer	= (char*)malloc(size + 1);
+		fread(buffer, 1, size, f);
+		buffer[size]	= '\0';
+		fclose(f);
+		return buffer;
+	} else {
+		return NULL;
+	}
+}
+
+void
+test_twitter() {
+	char*	twitter	= load_file("twitter.json");
+	json_value_t*	val	= json_parse(twitter);
+	dump(val, 0);
+	json_free(val);
+	free(twitter);
+}
+
 int
 main(int argc, char* argv[]) {
 	test_simple_object();
 	test_simple_object2();
+	test_twitter();
 	return 0;
 }
