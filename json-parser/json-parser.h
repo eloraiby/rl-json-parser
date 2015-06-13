@@ -33,6 +33,39 @@
 #	endif
 #endif
 
+#ifndef MIN
+#	define MIN(a, b)	((a) < (b) ? (a) : (b))
+#endif
+
+#include <string.h>
+
+#define DECLARE_VEC_TYPE(NAME, TYPE)	\
+			typedef struct { \
+				size_t	count; \
+				size_t  _max; \
+				TYPE*	array; \
+			} NAME; \
+			static inline NAME	NAME ## _new()					{ NAME v; v.count = 0; v._max = 0; v.array = NULL; return v; } \
+			static inline void	NAME ## _release(NAME* v)			{ v->count = 0; v->_max = 0; free(v->array); v->array = NULL; } \
+			static inline TYPE	NAME ## _get(NAME* v, size_t idx)		{ return v->array[idx]; } \
+			static inline void	NAME ## _set(NAME* v, size_t idx, TYPE t)	{ v->array[idx] = t; } \
+			static inline TYPE	NAME ## _pop(NAME* v)				{ TYPE t = v->array[--(v->count)]; return t; } \
+			static inline void	NAME ## _push(NAME* v, TYPE e)			{ if( v->count == v->_max ) { \
+												       v->_max = v->_max ? (v->_max) << 1 : 2; \
+												       v->array = (TYPE*)realloc(v->array, sizeof(TYPE) * v->_max);	\
+												  } \
+												  v->array[(v->count)++] = e; \
+												} \
+			static inline NAME	NAME ## _copy(NAME* orig)			{ NAME dest; \
+												  dest.count = orig->count; \
+												  dest._max = orig->_max; \
+												  dest.array = (TYPE*)malloc(sizeof(TYPE) * orig->_max); \
+												  memcpy(dest.array, orig->array, sizeof(TYPE) * orig->_max); \
+												  return dest; \
+												} \
+			static inline void	NAME ## _resize(NAME* v, size_t s)		{ v->_max = s; v->count = MIN(v->count, s); v->array = (TYPE*)realloc(v->array, sizeof(TYPE) * s); }
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,15 +87,8 @@ typedef struct {
 	struct json_value_s*	value;
 } json_pair_t;
 
-typedef struct {
-	int			count;
-	struct json_value_s**	values;
-} json_value_array_t;
-
-typedef struct {
-	int			count;
-	json_pair_t*		pairs;
-} json_pair_array_t;
+DECLARE_VEC_TYPE(json_pair_array_t, json_pair_t)
+DECLARE_VEC_TYPE(json_value_array_t, struct json_value_s*)
 
 typedef struct json_value_s {
 	JSON_TYPE			tag;

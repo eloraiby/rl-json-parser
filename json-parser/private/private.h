@@ -53,9 +53,9 @@ void			json_free_elements	(json_elements_t*);
 json_value_t*		json_make_array(json_elements_t*);
 
 json_value_t*		json_boolean		(bool);
-json_value_t*		json_number			(double);
-json_value_t*		json_string			(const char*);
-json_value_t*		json_none			();
+json_value_t*		json_number		(double);
+json_value_t*		json_string		(const char*);
+json_value_t*		json_none		();
 
 #endif // JSON_PRIVATE_H
 
