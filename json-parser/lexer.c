@@ -194,6 +194,14 @@ copy_token(const char* ts, const char *te, char* dst) {
 }
 
 static json_value_t*
+token_to_string(const char* b) {
+	size_t	len	= strlen(b);
+	char*	str = (char*)malloc(len + 1);
+	memcpy(str, b, len + 1);
+	return json_string(str);
+}
+
+static json_value_t*
 token_to_boolean(const char* b) {
 	if( !strcmp(b, "true") ) {
 		return json_boolean(true);
@@ -208,11 +216,6 @@ token_to_number(const char* r) {
 	sscanf(r, "%lf", &v);
 	/* TODO: check limit */
 	return json_number(v);
-}
-
-static json_value_t*
-token_to_string(const char* str) {
-	return json_string(str);
 }
 
 static json_value_t*
@@ -247,7 +250,7 @@ json_parse(const char* str)
 	memset(tmp, 0, sizeof(tmp));
 
 	
-#line 251 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 254 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 	{
 	cs = scanner_start;
 	ts = 0;
@@ -255,10 +258,10 @@ json_parse(const char* str)
 	act = 0;
 	}
 
-#line 184 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 187 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 
 	
-#line 262 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 265 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -279,7 +282,7 @@ _resume:
 #line 1 "NONE"
 	{ts = p;}
 	break;
-#line 283 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 286 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -395,7 +398,7 @@ _eof_trans:
 									PUSH_TE();
 									PUSH_TS();
 									++ts; --te;
-									ADVANCE( string, JSON_TOK_STRING );
+									ADVANCE(string, JSON_TOK_STRING);
 									POP_TS();
 									POP_TE();
 								}}
@@ -497,7 +500,7 @@ _eof_trans:
 	}
 	}
 	break;
-#line 501 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 504 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -510,7 +513,7 @@ _again:
 #line 1 "NONE"
 	{ts = 0;}
 	break;
-#line 514 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 517 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -530,7 +533,7 @@ _again:
 	_out: {}
 	}
 
-#line 186 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 189 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 
 	/* Check if we failed. */
 	if ( cs == scanner_error ) {

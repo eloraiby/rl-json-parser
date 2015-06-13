@@ -38,7 +38,7 @@ json_value_t*		json_object		();
 json_value_t*		json_array		();
 json_value_t*		json_boolean		(bool);
 json_value_t*		json_number		(double);
-json_value_t*		json_string		(const char*);
+json_value_t*		json_string		(char*);
 json_value_t*		json_none		();
 
 #endif // JSON_PRIVATE_H

@@ -44,8 +44,19 @@
 %type memnbers	{ json_value_t* }
 %type elements	{ json_value_t* }
 %type object	{ json_value_t* }
+%type array	{ json_value_t* }
 %type value	{ json_value_t* }
-%type string	{ char* }
+
+%destructor pair	{ free($$.key); json_free($$.value); }
+%destructor members	{ json_free($$); }
+%destructor elements	{ json_free($$); }
+%destructor array	{ json_free($$); }
+%destructor object	{ json_free($$); }
+%destructor value	{ json_free($$); }
+
+%token_type	{ json_value_t* }
+
+%token_destructor { json_free($$); }
 
 %start_symbol root
 
@@ -54,12 +65,7 @@ root		::= object(B).			{ pret->root = B; }
 root		::= array(B).			{ pret->root = B; }
 
 /* literals */
-string(A)	::= JSON_TOK_STRING(B).		{ A = B; }
-number(A)	::= JSON_TOK_NUMBER(B).		{ A = B; }
-boolean(A)	::= JSON_TOK_BOOLEAN(B).	{ A = B; }
-none(A)		::= JSON_TOK_NONE(B).		{ A = B; }
-
-pair(A)		::= string(B) JSON_TOK_COL value(C).	{ A = json_pair(B, C); }
+pair(A)		::= JSON_TOK_STRING(B) JSON_TOK_COL value(C).	{ A = json_pair(B->value.string, C); free(B); }
 
 members(A)	::= pair(B).				{ A = json_object(); json_add_pair(B, A); }
 members(A)	::= members(B) JSON_TOK_COMMA pair(C).	{ A = json_add_pair(C, B); }
@@ -73,10 +79,10 @@ array(A)	::= JSON_TOK_LSQB elements(B) JSON_TOK_RSQB.	{ A = B; }
 elements(A)	::= value(B).				{ A = json_array(); json_add_element(B, A); }
 elements(A)	::= elements(B) JSON_TOK_COMMA value(C).{ A = json_add_element(C, B); }
 
-value(A)	::= string(B).				{ A = json_string(B); }
-value(A)	::= number(B).				{ A = B; }
-value(A)	::= boolean(B).				{ A = B; }
-value(A)	::= none(B).				{ A = B; }
+value(A)	::= JSON_TOK_STRING(B).			{ A = B; }
+value(A)	::= JSON_TOK_NUMBER(B).			{ A = B; }
+value(A)	::= JSON_TOK_BOOLEAN(B).		{ A = B; }
+value(A)	::= JSON_TOK_NONE(B).			{ A = B; }
 value(A)	::= object(B).				{ A = B; }
 value(A)	::= array(B).				{ A = B; }
 

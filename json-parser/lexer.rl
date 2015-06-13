@@ -74,7 +74,7 @@ extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_p
 									PUSH_TE();
 									PUSH_TS();
 									++ts; --te;
-									ADVANCE( string, JSON_TOK_STRING );
+									ADVANCE(string, JSON_TOK_STRING);
 									POP_TS();
 									POP_TE();
 								};
@@ -128,6 +128,14 @@ copy_token(const char* ts, const char *te, char* dst) {
 }
 
 static json_value_t*
+token_to_string(const char* b) {
+	size_t	len	= strlen(b);
+	char*	str = (char*)malloc(len + 1);
+	memcpy(str, b, len + 1);
+	return json_string(str);
+}
+
+static json_value_t*
 token_to_boolean(const char* b) {
 	if( !strcmp(b, "true") ) {
 		return json_boolean(true);
@@ -142,11 +150,6 @@ token_to_number(const char* r) {
 	sscanf(r, "%lf", &v);
 	/* TODO: check limit */
 	return json_number(v);
-}
-
-static json_value_t*
-token_to_string(const char* str) {
-	return json_string(str);
 }
 
 static json_value_t*

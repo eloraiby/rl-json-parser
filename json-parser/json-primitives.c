@@ -80,11 +80,10 @@ json_number			(double n) {
 }
 
 json_value_t*
-json_string			(const char* str) {
+json_string			(char* str) {
 	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
 	ret->tag	= JSON_STRING;
-	ret->value.string	= (char*)malloc(strlen(str) + 1);
-	memcpy(ret->value.string, str, strlen(str) + 1);
+	ret->value.string	= str;
 	return ret;
 }
 
@@ -97,35 +96,37 @@ json_none			()  {
 
 void
 json_free(json_value_t* v) {
-	switch( v->tag ) {
-	case JSON_STRING:
-		free(v->value.string);
-		break;
+	if( v ) {
+		switch( v->tag ) {
+		case JSON_STRING:
+			free(v->value.string);
+			break;
 
-	case JSON_NUMBER:
-		break;
+		case JSON_NUMBER:
+			break;
 
-	case JSON_OBJECT:
-		for( size_t c = 0; c < v->value.members.count; ++c ) {
-			free(v->value.members.array[c].key);
-			json_free(v->value.members.array[c].value);
+		case JSON_OBJECT:
+			for( size_t c = 0; c < v->value.members.count; ++c ) {
+				free(v->value.members.array[c].key);
+				json_free(v->value.members.array[c].value);
+			}
+			json_pair_array_release(&(v->value.members));
+			break;
+
+		case JSON_ARRAY:
+			for( size_t c = 0; c < v->value.array.count; ++c ) {
+				json_free(v->value.array.array[c]);
+			}
+			json_value_array_release(&(v->value.array));
+			break;
+
+		case JSON_BOOLEAN:
+			break;
+
+		case JSON_NONE:
+			break;
 		}
-		json_pair_array_release(&(v->value.members));
-		break;
 
-	case JSON_ARRAY:
-		for( size_t c = 0; c < v->value.array.count; ++c ) {
-			json_free(v->value.array.array[c]);
-		}
-		json_value_array_release(&(v->value.array));
-		break;
-
-	case JSON_BOOLEAN:
-		break;
-
-	case JSON_NONE:
-		break;
+		free(v);
 	}
-
-	free(v);
 }
