@@ -40,11 +40,12 @@
 	fprintf(stderr, "error starting @: %s", pret->token_start);
 }
 
-%type pair	{ json_pair_t* }
-%type memnbers	{ json_members_t* }
-%type elements	{ json_elements_t* }
+%type pair	{ json_pair_t }
+%type memnbers	{ json_value_t* }
+%type elements	{ json_value_t* }
 %type object	{ json_value_t* }
 %type value	{ json_value_t* }
+%type string	{ char* }
 
 %start_symbol root
 
@@ -58,21 +59,21 @@ number(A)	::= JSON_TOK_NUMBER(B).		{ A = B; }
 boolean(A)	::= JSON_TOK_BOOLEAN(B).	{ A = B; }
 none(A)		::= JSON_TOK_NONE(B).		{ A = B; }
 
-pair(A)		::= string(B) JSON_TOK_COL value(C).	{ A = json_make_pair(B, C); free(B); }
+pair(A)		::= string(B) JSON_TOK_COL value(C).	{ A = json_pair(B, C); }
 
-members(A)	::= pair(B).				{ A = json_make_members(B, NULL); }
-members(A)	::= members(B) JSON_TOK_COMMA pair(C).	{ A = json_make_members(C, B); }
+members(A)	::= pair(B).				{ A = json_object(); json_add_pair(B, A); }
+members(A)	::= members(B) JSON_TOK_COMMA pair(C).	{ A = json_add_pair(C, B); }
 
-object(A)	::= JSON_TOK_LBRACK JSON_TOK_RBRACK.	{ A = json_make_object(NULL);	}
-object(A)	::= JSON_TOK_LBRACK members(B) JSON_TOK_RBRACK.	{ A = json_make_object(B); json_free_members(B); }
+object(A)	::= JSON_TOK_LBRACK JSON_TOK_RBRACK.	{ A = json_object();	}
+object(A)	::= JSON_TOK_LBRACK members(B) JSON_TOK_RBRACK.	{ A = B; }
 
-array(A)	::= JSON_TOK_LSQB JSON_TOK_RSQB.	{ A = json_make_array(NULL);	}
-array(A)	::= JSON_TOK_LSQB elements(B) JSON_TOK_RSQB.	{ A = json_make_array(B); json_free_elements(B); }
+array(A)	::= JSON_TOK_LSQB JSON_TOK_RSQB.	{ A = json_array();	}
+array(A)	::= JSON_TOK_LSQB elements(B) JSON_TOK_RSQB.	{ A = B; }
 
-elements(A)	::= value(B).				{ A = json_make_elements(B, NULL); }
-elements(A)	::= elements(B) JSON_TOK_COMMA value(C).{ A = json_make_elements(C, B); }
+elements(A)	::= value(B).				{ A = json_array(); json_add_element(B, A); }
+elements(A)	::= elements(B) JSON_TOK_COMMA value(C).{ A = json_add_element(C, B); }
 
-value(A)	::= string(B).				{ A = B; }
+value(A)	::= string(B).				{ A = json_string(B); }
 value(A)	::= number(B).				{ A = B; }
 value(A)	::= boolean(B).				{ A = B; }
 value(A)	::= none(B).				{ A = B; }

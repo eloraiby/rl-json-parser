@@ -69,9 +69,8 @@
 typedef union {
   int yyinit;
   parserTOKENTYPE yy0;
-  json_elements_t* yy4;
-  json_pair_t* yy7;
-  json_members_t* yy30;
+  char* yy9;
+  json_pair_t yy29;
   json_value_t* yy44;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
@@ -151,37 +150,39 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **                     shifting non-terminals after a reduce.
 **  yy_default[]       Default action for each state.
 */
-#define YY_ACTTAB_COUNT (60)
+#define YY_ACTTAB_COUNT (61)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */     7,   17,   15,   30,   16,   21,   20,   19,   18,   17,
- /*    10 */    25,   31,   16,   21,   20,   19,   18,   17,   22,    3,
- /*    20 */    16,   21,   20,   19,   18,   29,   28,   27,   26,   29,
+ /*     0 */     7,   17,   15,   21,   30,   16,   20,   19,   18,   17,
+ /*    10 */    25,   21,   31,   16,   20,   19,   18,   17,   22,   21,
+ /*    20 */     3,   16,   20,   19,   18,   29,   28,   27,   26,   29,
  /*    30 */     4,    4,    1,    1,   24,   29,   28,   27,   26,   14,
- /*    40 */    53,    4,   53,    1,    2,    5,    8,   12,   23,   13,
- /*    50 */     6,   10,   29,   52,    9,   53,    8,   53,   53,   11,
+ /*    40 */    53,    4,   53,    1,    8,    2,    5,   13,   12,   23,
+ /*    50 */     6,   10,    8,   29,   52,    9,   53,   53,   53,   53,
+ /*    60 */    11,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */    14,   15,   16,    0,   18,   19,   20,   21,   22,   15,
- /*    10 */    16,    0,   18,   19,   20,   21,   22,   15,   16,    5,
- /*    20 */    18,   19,   20,   21,   22,    1,    2,    3,    4,    1,
+ /*     0 */    14,   15,   16,   17,    0,   19,   20,   21,   22,   15,
+ /*    10 */    16,   17,    0,   19,   20,   21,   22,   15,   16,   17,
+ /*    20 */     5,   19,   20,   21,   22,    1,    2,    3,    4,    1,
  /*    30 */     7,    7,    9,    9,   10,    1,    2,    3,    4,   12,
- /*    40 */    24,    7,   24,    9,    6,    6,   19,    8,   10,   12,
- /*    50 */    23,   15,    1,   17,   18,   24,   19,   24,   24,    8,
+ /*    40 */    24,    7,   24,    9,   17,    6,    6,   12,    8,   10,
+ /*    50 */    23,   15,   17,    1,   18,   19,   24,   24,   24,   24,
+ /*    60 */     8,
 };
 #define YY_SHIFT_USE_DFLT (-1)
 #define YY_SHIFT_COUNT (10)
 #define YY_SHIFT_MIN   (0)
-#define YY_SHIFT_MAX   (51)
+#define YY_SHIFT_MAX   (52)
 static const signed char yy_shift_ofst[] = {
- /*     0 */    23,   24,   34,   34,   51,   28,   39,   38,   14,   11,
- /*    10 */     3,
+ /*     0 */    23,   24,   34,   34,   52,   28,   40,   39,   15,   12,
+ /*    10 */     4,
 };
 #define YY_REDUCE_USE_DFLT (-15)
 #define YY_REDUCE_COUNT (5)
 #define YY_REDUCE_MIN   (-14)
-#define YY_REDUCE_MAX   (37)
+#define YY_REDUCE_MAX   (36)
 static const signed char yy_reduce_ofst[] = {
- /*     0 */    36,  -14,    2,   -6,   27,   37,
+ /*     0 */    36,  -14,    2,   -6,   27,   35,
 };
 static const YYACTIONTYPE yy_default[] = {
  /*     0 */    51,   51,   51,   51,   51,   51,   51,   51,   51,   51,
@@ -283,7 +284,7 @@ static const char *const yyTokenName[] = {
   "JSON_TOK_NONE",  "JSON_TOK_COL",  "JSON_TOK_COMMA",  "JSON_TOK_LBRACK",
   "JSON_TOK_RBRACK",  "JSON_TOK_LSQB",  "JSON_TOK_RSQB",  "error",       
   "pair",          "memnbers",      "elements",      "object",      
-  "value",         "root",          "array",         "string",      
+  "value",         "string",        "root",          "array",       
   "number",        "boolean",       "none",          "members",     
 };
 #endif /* NDEBUG */
@@ -626,9 +627,9 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
+  { 18, 1 },
+  { 18, 1 },
   { 17, 1 },
-  { 17, 1 },
-  { 19, 1 },
   { 20, 1 },
   { 21, 1 },
   { 22, 1 },
@@ -637,8 +638,8 @@ static const struct {
   { 23, 3 },
   { 15, 2 },
   { 15, 3 },
-  { 18, 2 },
-  { 18, 3 },
+  { 19, 2 },
+  { 19, 3 },
   { 14, 1 },
   { 14, 3 },
   { 16, 1 },
@@ -702,81 +703,89 @@ static void yy_reduce(
   **     break;
   */
       case 0: /* root ::= object */
-#line 52 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+#line 53 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { pret->root = yymsp[0].minor.yy44; }
-#line 708 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+#line 709 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 1: /* root ::= array */
-#line 53 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+#line 54 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { pret->root = yymsp[0].minor.yy0; }
-#line 713 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+#line 714 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 2: /* string ::= JSON_TOK_STRING */
-      case 3: /* number ::= JSON_TOK_NUMBER */ yytestcase(yyruleno==3);
+#line 57 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy9 = yymsp[0].minor.yy0; }
+#line 719 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+        break;
+      case 3: /* number ::= JSON_TOK_NUMBER */
       case 4: /* boolean ::= JSON_TOK_BOOLEAN */ yytestcase(yyruleno==4);
       case 5: /* none ::= JSON_TOK_NONE */ yytestcase(yyruleno==5);
-#line 56 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+#line 58 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy0 = yymsp[0].minor.yy0; }
-#line 721 "/home/aifu/Projects/json-parser/json-parser/parser.c"
-        break;
-      case 6: /* pair ::= string JSON_TOK_COL value */
-#line 61 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy7 = json_make_pair(yymsp[-2].minor.yy0, yymsp[0].minor.yy44); free(yymsp[-2].minor.yy0); }
 #line 726 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 7: /* members ::= pair */
-#line 63 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, NULL); }
+      case 6: /* pair ::= string JSON_TOK_COL value */
+#line 62 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy29 = json_pair(yymsp[-2].minor.yy9, yymsp[0].minor.yy44); }
 #line 731 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 8: /* members ::= members JSON_TOK_COMMA pair */
+      case 7: /* members ::= pair */
 #line 64 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_members(yymsp[0].minor.yy7, yymsp[-2].minor.yy0); }
+{ yygotominor.yy0 = json_object(); json_add_pair(yymsp[0].minor.yy29, yygotominor.yy0); }
 #line 736 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 9: /* object ::= JSON_TOK_LBRACK JSON_TOK_RBRACK */
-#line 66 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy44 = json_make_object(NULL);	}
+      case 8: /* members ::= members JSON_TOK_COMMA pair */
+#line 65 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy0 = json_add_pair(yymsp[0].minor.yy29, yymsp[-2].minor.yy0); }
 #line 741 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 10: /* object ::= JSON_TOK_LBRACK members JSON_TOK_RBRACK */
+      case 9: /* object ::= JSON_TOK_LBRACK JSON_TOK_RBRACK */
 #line 67 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy44 = json_make_object(yymsp[-1].minor.yy0); json_free_members(yymsp[-1].minor.yy0); }
+{ yygotominor.yy44 = json_object();	}
 #line 746 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 11: /* array ::= JSON_TOK_LSQB JSON_TOK_RSQB */
-#line 69 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_array(NULL);	}
+      case 10: /* object ::= JSON_TOK_LBRACK members JSON_TOK_RBRACK */
+#line 68 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy44 = yymsp[-1].minor.yy0; }
 #line 751 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 12: /* array ::= JSON_TOK_LSQB elements JSON_TOK_RSQB */
+      case 11: /* array ::= JSON_TOK_LSQB JSON_TOK_RSQB */
 #line 70 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy0 = json_make_array(yymsp[-1].minor.yy4); json_free_elements(yymsp[-1].minor.yy4); }
+{ yygotominor.yy0 = json_array();	}
 #line 756 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 13: /* elements ::= value */
-#line 72 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy4 = json_make_elements(yymsp[0].minor.yy44, NULL); }
+      case 12: /* array ::= JSON_TOK_LSQB elements JSON_TOK_RSQB */
+#line 71 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy0 = yymsp[-1].minor.yy44; }
 #line 761 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
-      case 14: /* elements ::= elements JSON_TOK_COMMA value */
+      case 13: /* elements ::= value */
 #line 73 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy4 = json_make_elements(yymsp[0].minor.yy44, yymsp[-2].minor.yy4); }
+{ yygotominor.yy44 = json_array(); json_add_element(yymsp[0].minor.yy44, yygotominor.yy44); }
 #line 766 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
+      case 14: /* elements ::= elements JSON_TOK_COMMA value */
+#line 74 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy44 = json_add_element(yymsp[0].minor.yy44, yymsp[-2].minor.yy44); }
+#line 771 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+        break;
       case 15: /* value ::= string */
-      case 16: /* value ::= number */ yytestcase(yyruleno==16);
+#line 76 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+{ yygotominor.yy44 = json_string(yymsp[0].minor.yy9); }
+#line 776 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+        break;
+      case 16: /* value ::= number */
       case 17: /* value ::= boolean */ yytestcase(yyruleno==17);
       case 18: /* value ::= none */ yytestcase(yyruleno==18);
       case 20: /* value ::= array */ yytestcase(yyruleno==20);
-#line 75 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+#line 77 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy44 = yymsp[0].minor.yy0; }
-#line 775 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+#line 784 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 19: /* value ::= object */
-#line 79 "/home/aifu/Projects/json-parser/json-parser/parser.y"
+#line 80 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 { yygotominor.yy44 = yymsp[0].minor.yy44; }
-#line 780 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+#line 789 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       default:
         break;
@@ -841,7 +850,7 @@ static void yy_syntax_error(
 #line 39 "/home/aifu/Projects/json-parser/json-parser/parser.y"
 
 	fprintf(stderr, "error starting @: %s", pret->token_start);
-#line 845 "/home/aifu/Projects/json-parser/json-parser/parser.c"
+#line 854 "/home/aifu/Projects/json-parser/json-parser/parser.c"
   parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

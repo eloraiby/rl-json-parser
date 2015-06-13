@@ -21,37 +21,21 @@
 
 #include "../json-parser.h"
 
-typedef struct json_members_s {
-	json_pair_t*			value;
-	struct json_members_s*	next;
-} json_members_t;
-
-typedef struct json_elements_s {
-	json_value_t*			value;
-	struct json_elements_s*	next;
-} json_elements_t;
-
 typedef struct {
 	const char*		token_start;
 	const char*		token_end;
-	int				token_line;
+	int			token_line;
 
 	json_value_t*	root;
 } json_parser_t;
 
-json_pair_t*		json_make_pair		(json_value_t*, json_value_t*);
-json_members_t*		json_make_members	(json_pair_t*, json_members_t*);
-/** free the list and the pairs (keep the keys/values) */
-void			json_free_members	(json_members_t*);
 
-json_value_t*		json_make_object	(json_members_t*);
+json_pair_t		json_pair		(char* key, json_value_t* value);
+json_value_t*		json_add_pair		(json_pair_t, json_value_t* /* object */);
+json_value_t*		json_add_element	(json_value_t* /* value */, json_value_t* /* array */);
 
-json_elements_t*	json_make_elements	(json_value_t*, json_elements_t*);
-/** free the list (keep the values) */
-void			json_free_elements	(json_elements_t*);
-
-json_value_t*		json_make_array(json_elements_t*);
-
+json_value_t*		json_object		();
+json_value_t*		json_array		();
 json_value_t*		json_boolean		(bool);
 json_value_t*		json_number		(double);
 json_value_t*		json_string		(const char*);

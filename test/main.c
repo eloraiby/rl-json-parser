@@ -21,8 +21,8 @@ dump(json_value_t* v, int level) {
 	switch( v->tag ) {
 	case JSON_ARRAY:
 		print_level(level, "[");
-		for( int i = 0; i < v->value.array.count; ++i ) {
-			dump(v->value.array.values[i], 0);
+		for( size_t i = 0; i < v->value.array.count; ++i ) {
+			dump(v->value.array.array[i], 0);
 
 			if( i < v->value.array.count - 1) {
 				printf(", ");
@@ -46,10 +46,10 @@ dump(json_value_t* v, int level) {
 
 	case JSON_OBJECT:
 		print_level(level, "{\n");
-		for( int i = 0; i < v->value.members.count; ++i ) {
-			print_level(0, "\"%s\"", v->value.members.pairs[i].key);
+		for( size_t i = 0; i < v->value.members.count; ++i ) {
+			print_level(0, "\"%s\"", v->value.members.array[i].key);
 			printf(" : ");
-			dump(v->value.members.pairs[i].value, 0);
+			dump(v->value.members.array[i].value, 0);
 
 
 			if( i < v->value.members.count - 1) {

@@ -39,31 +39,31 @@
 
 #include <string.h>
 
-#define DECLARE_VEC_TYPE(NAME, TYPE)	\
+#define DECLARE_ARRAY(NAME, TYPE)	\
 			typedef struct { \
 				size_t	count; \
-				size_t  _max; \
+				size_t  capacity; \
 				TYPE*	array; \
-			} NAME; \
-			static inline NAME	NAME ## _new()					{ NAME v; v.count = 0; v._max = 0; v.array = NULL; return v; } \
-			static inline void	NAME ## _release(NAME* v)			{ v->count = 0; v->_max = 0; free(v->array); v->array = NULL; } \
-			static inline TYPE	NAME ## _get(NAME* v, size_t idx)		{ return v->array[idx]; } \
-			static inline void	NAME ## _set(NAME* v, size_t idx, TYPE t)	{ v->array[idx] = t; } \
-			static inline TYPE	NAME ## _pop(NAME* v)				{ TYPE t = v->array[--(v->count)]; return t; } \
-			static inline void	NAME ## _push(NAME* v, TYPE e)			{ if( v->count == v->_max ) { \
-												       v->_max = v->_max ? (v->_max) << 1 : 2; \
-												       v->array = (TYPE*)realloc(v->array, sizeof(TYPE) * v->_max);	\
+			} NAME ## _t; \
+			static inline NAME ## _t	NAME ## _new()				{ NAME ## _t v; v.count = 0; v.capacity = 0; v.array = NULL; return v; } \
+			static inline void	NAME ## _release(NAME ## _t* v)			{ v->count = 0; v->capacity = 0; free(v->array); v->array = NULL; } \
+			static inline TYPE	NAME ## _get(NAME ## _t* v, size_t idx)		{ return v->array[idx]; } \
+			static inline void	NAME ## _set(NAME ## _t* v, size_t idx, TYPE t)	{ v->array[idx] = t; } \
+			static inline TYPE	NAME ## _pop(NAME ## _t* v)				{ TYPE t = v->array[--(v->count)]; return t; } \
+			static inline void	NAME ## _push(NAME ## _t* v, TYPE e)			{ if( v->count == v->capacity ) { \
+												       v->capacity = v->capacity ? (v->capacity) << 1 : 2; \
+												       v->array = (TYPE*)realloc(v->array, sizeof(TYPE) * v->capacity);	\
 												  } \
 												  v->array[(v->count)++] = e; \
 												} \
-			static inline NAME	NAME ## _copy(NAME* orig)			{ NAME dest; \
+			static inline NAME ## _t	NAME ## _copy(NAME ## _t* orig)		{ NAME ## _t dest; \
 												  dest.count = orig->count; \
-												  dest._max = orig->_max; \
-												  dest.array = (TYPE*)malloc(sizeof(TYPE) * orig->_max); \
-												  memcpy(dest.array, orig->array, sizeof(TYPE) * orig->_max); \
+												  dest.capacity = orig->capacity; \
+												  dest.array = (TYPE*)malloc(sizeof(TYPE) * orig->capacity); \
+												  memcpy(dest.array, orig->array, sizeof(TYPE) * orig->capacity); \
 												  return dest; \
 												} \
-			static inline void	NAME ## _resize(NAME* v, size_t s)		{ v->_max = s; v->count = MIN(v->count, s); v->array = (TYPE*)realloc(v->array, sizeof(TYPE) * s); }
+			static inline void	NAME ## _resize(NAME ## _t* v, size_t s)	{ v->capacity = s; v->count = MIN(v->count, s); v->array = (TYPE*)realloc(v->array, sizeof(TYPE) * s); }
 
 
 
@@ -87,8 +87,8 @@ typedef struct {
 	struct json_value_s*	value;
 } json_pair_t;
 
-DECLARE_VEC_TYPE(json_pair_array_t, json_pair_t)
-DECLARE_VEC_TYPE(json_value_array_t, struct json_value_s*)
+DECLARE_ARRAY(json_pair_array, json_pair_t)
+DECLARE_ARRAY(json_value_array, struct json_value_s*)
 
 typedef struct json_value_s {
 	JSON_TYPE			tag;

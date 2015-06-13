@@ -23,137 +23,44 @@
 
 #include "./private/private.h"
 
-json_pair_t*
-json_make_pair		(json_value_t* key, json_value_t* value) {
-	assert(key->tag == JSON_STRING);
-	json_pair_t*	pair	= (json_pair_t*)malloc(sizeof(json_pair_t));
-	pair->key	= key->value.string;
-	pair->value	= value;
+json_pair_t
+json_pair		(char* key, json_value_t* value) {
+	json_pair_t	pair;
+	pair.key	= key;
+	pair.value	= value;
 	return pair;
 }
 
-json_members_t*
-json_make_members	(json_pair_t* p, json_members_t* m) {
-	json_members_t*	nm	= (json_members_t*)malloc(sizeof(json_members_t));
-	nm->value	= p;
-	nm->next	= m;
-	return nm;
-}
-
-static int
-json_members_count	(json_members_t* m) {
-	int	count	= 0;
-	while( m ) {
-		++count;
-		m	= m->next;
-	}
-	return count;
-}
-
-static json_pair_array_t
-json_members_to_array	(json_members_t* m) {
-	json_pair_array_t	parr;
-
-	if ( m ) {
-		parr.count	= json_members_count(m);
-		parr.pairs	= (json_pair_t*)malloc(sizeof(json_pair_t) * parr.count);
-		int	index	= parr.count - 1;
-
-		while( m ) {
-			parr.pairs[index]	= *(m->value);
-			m			= m->next;
-			--index;
-		}
-
-	} else {
-		parr.count	= 0;
-		parr.pairs	= NULL;
-	}
-	return parr;
-}
-
-/*
- * free the list and the pairs (keep the keys/values)
- */
-void
-json_free_members(json_members_t* m) {
-	json_members_t*	tmp	= NULL;
-
-	while( m ) {
-		tmp	= m->next;
-
-		if( m->value ) {
-			free(m->value);
-		}
-
-		free(m);
-		m	= tmp;
-	}
-}
 
 json_value_t*
-json_make_object	(json_members_t* m) {
+json_object		() {
 	json_value_t*	object	= (json_value_t*)malloc(sizeof(json_value_t));
 	object->tag	= JSON_OBJECT;
-	object->value.members	= json_members_to_array(m);
+	object->value.members	= json_pair_array_new();
 	return object;
 }
 
-json_elements_t*
-json_make_elements	(json_value_t* v, json_elements_t* e) {
-	json_elements_t*	ne	= (json_elements_t*)malloc(sizeof(json_elements_t));
-	ne->value	= v;
-	ne->next	= e;
-	return ne;
-}
-
-/*
- * free the list (keep the values)
- */
-void
-json_free_elements	(json_elements_t* e) {
-	json_elements_t*	tmp	= NULL;
-
-	while( e ) {
-		tmp	= e->next;
-
-		free(e);
-		e	= tmp;
-	}
-}
-
-static int
-json_elements_count	(json_elements_t* e) {
-	int	count	= 0;
-	while( e ) {
-		++count;
-		e	= e->next;
-	}
-	return count;
+json_value_t*
+json_add_pair		(json_pair_t p, json_value_t* v) {
+	assert(v->tag == JSON_OBJECT);
+	json_pair_array_push(&(v->value.members), p);
+	return v;
 }
 
 json_value_t*
-json_make_array(json_elements_t* e) {
+json_array		() {
 	json_value_t*	arr	= (json_value_t*)malloc(sizeof(json_value_t));
 	arr->tag	= JSON_ARRAY;
-
-	if ( e ) {
-		arr->value.array.count	= json_elements_count(e);
-		arr->value.array.values	= (json_value_t**)malloc(sizeof(json_value_t*) * arr->value.array.count);
-		int		index	= arr->value.array.count - 1;
-
-		while( e ) {
-			arr->value.array.values[index]	= e->value;
-			e	= e->next;
-			--index;
-		}
-
-	} else {
-		arr->value.array.count	= 0;
-		arr->value.array.values	= NULL;
-	}
+	arr->value.array	= json_value_array_new();
 
 	return arr;
+}
+
+json_value_t*
+json_add_element	(json_value_t* e, json_value_t* v) {
+	assert(v->tag == JSON_ARRAY);
+	json_value_array_push(&(v->value.array), e);
+	return v;
 }
 
 json_value_t*
@@ -199,18 +106,18 @@ json_free(json_value_t* v) {
 		break;
 
 	case JSON_OBJECT:
-		for( int c = 0; c < v->value.members.count; ++c ) {
-			free(v->value.members.pairs[c].key);
-			json_free(v->value.members.pairs[c].value);
+		for( size_t c = 0; c < v->value.members.count; ++c ) {
+			free(v->value.members.array[c].key);
+			json_free(v->value.members.array[c].value);
 		}
-		free(v->value.members.pairs);
+		json_pair_array_release(&(v->value.members));
 		break;
 
 	case JSON_ARRAY:
-		for( int c = 0; c < v->value.array.count; ++c ) {
-			json_free(v->value.array.values[c]);
+		for( size_t c = 0; c < v->value.array.count; ++c ) {
+			json_free(v->value.array.array[c]);
 		}
-		free(v->value.array.values);
+		json_value_array_release(&(v->value.array));
 		break;
 
 	case JSON_BOOLEAN:
