@@ -128,39 +128,39 @@ test_citm_catalog() {
 
 static char*
 fail_tests[] = {
-	"jsonchecker/fail01_EXCLUDE.json",
-	"jsonchecker/fail02.json",
-	"jsonchecker/fail03.json",
-	"jsonchecker/fail04.json",
-	"jsonchecker/fail05.json",
+//	"jsonchecker/fail01_EXCLUDE.json",
+//	"jsonchecker/fail02.json",
+//	"jsonchecker/fail03.json",
+//	"jsonchecker/fail04.json",
+//	"jsonchecker/fail05.json",
 	"jsonchecker/fail06.json",
-	"jsonchecker/fail07.json",
-	"jsonchecker/fail08.json",
-	"jsonchecker/fail09.json",
-	"jsonchecker/fail10.json",
-	"jsonchecker/fail11.json",
-	"jsonchecker/fail12.json",
-	"jsonchecker/fail13.json",
-	"jsonchecker/fail14.json",
-	"jsonchecker/fail15.json",
-	"jsonchecker/fail16.json",
-	"jsonchecker/fail17.json",
-	"jsonchecker/fail18_EXCLUDE.json",
-	"jsonchecker/fail19.json",
-	"jsonchecker/fail20.json",
-	"jsonchecker/fail21.json",
-	"jsonchecker/fail22.json",
-	"jsonchecker/fail23.json",
-	"jsonchecker/fail24.json",
-	"jsonchecker/fail25.json",
-	"jsonchecker/fail26.json",
-	"jsonchecker/fail27.json",
-	"jsonchecker/fail28.json",
-	"jsonchecker/fail29.json",
-	"jsonchecker/fail30.json",
-	"jsonchecker/fail31.json",
-	"jsonchecker/fail32.json",
-	"jsonchecker/fail33.json",
+//	"jsonchecker/fail07.json",
+//	"jsonchecker/fail08.json",
+//	"jsonchecker/fail09.json",
+//	"jsonchecker/fail10.json",
+//	"jsonchecker/fail11.json",
+//	"jsonchecker/fail12.json",
+//	"jsonchecker/fail13.json",
+//	"jsonchecker/fail14.json",
+//	"jsonchecker/fail15.json",
+//	"jsonchecker/fail16.json",
+//	"jsonchecker/fail17.json",
+//	"jsonchecker/fail18_EXCLUDE.json",
+//	"jsonchecker/fail19.json",
+//	"jsonchecker/fail20.json",
+//	"jsonchecker/fail21.json",
+//	"jsonchecker/fail22.json",
+//	"jsonchecker/fail23.json",
+//	"jsonchecker/fail24.json",
+//	"jsonchecker/fail25.json",
+//	"jsonchecker/fail26.json",
+//	"jsonchecker/fail27.json",
+//	"jsonchecker/fail28.json",
+//	"jsonchecker/fail29.json",
+//	"jsonchecker/fail30.json",
+//	"jsonchecker/fail31.json",
+//	"jsonchecker/fail32.json",
+//	"jsonchecker/fail33.json",
 
 };
 
@@ -180,8 +180,8 @@ test_fail() {
 
 int
 main(int argc, char* argv[]) {
-	test_simple_object();
-	test_simple_object2();
+//	test_simple_object();
+//	test_simple_object2();
 //	test_twitter();
 //	test_canada();
 //	test_citm_catalog();

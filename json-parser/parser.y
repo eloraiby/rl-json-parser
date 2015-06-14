@@ -41,6 +41,11 @@
 	pret->error_code	= 1;
 }
 
+%syntax_error {
+	fprintf(stderr, "error starting @: %s", pret->token_start);
+	pret->error_code	= 1;
+}
+
 %type pair	{ json_pair_t }
 %type memnbers	{ json_value_t* }
 %type elements	{ json_value_t* }
@@ -55,9 +60,10 @@
 %destructor object	{ json_free($$); }
 %destructor value	{ json_free($$); }
 
+%token_destructor { json_free($$); }
+
 %token_type	{ json_value_t* }
 
-%token_destructor { json_free($$); }
 
 %start_symbol root
 

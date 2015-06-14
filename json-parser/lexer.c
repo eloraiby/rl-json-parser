@@ -245,13 +245,16 @@ json_parse(const char* str)
 
 	parser_.root	= NULL;
 	parser_.error_code	= 0;
+	parser_.token_start	= ts;
+	parser_.token_end	= te;
+	parser_.token_line	= line;
 
 	yyparser	= parser_alloc(malloc);
 
 	memset(tmp, 0, sizeof(tmp));
 
 	
-#line 255 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 258 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 	{
 	cs = scanner_start;
 	ts = 0;
@@ -259,10 +262,10 @@ json_parse(const char* str)
 	act = 0;
 	}
 
-#line 188 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 191 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 
 	
-#line 266 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 269 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -283,7 +286,7 @@ _resume:
 #line 1 "NONE"
 	{ts = p;}
 	break;
-#line 287 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 290 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -501,7 +504,7 @@ _eof_trans:
 	}
 	}
 	break;
-#line 505 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 508 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -514,7 +517,7 @@ _again:
 #line 1 "NONE"
 	{ts = 0;}
 	break;
-#line 518 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 521 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -534,18 +537,20 @@ _again:
 	_out: {}
 	}
 
-#line 190 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 193 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 
 	/* Check if we failed. */
 	if ( cs == scanner_error ) {
 		/* Machine failed before finding a token. */
-//		printf("PARSE ERROR\n");
+		printf("PARSE ERROR\n");
+		parser_free(yyparser, free);
 		return parser_.root;	/* failed! */
 	}
 
 	parser_advance(yyparser, 0, NULL, &parser_);
 
 	if( parser_.error_code != 0 ) {
+		parser_free(yyparser, free);
 		return NULL;
 	}
 
