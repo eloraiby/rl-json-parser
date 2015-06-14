@@ -36,8 +36,9 @@
 #include "private/private.h"
 }
 
-%syntax_error {
+%parse_failure {
 	fprintf(stderr, "error starting @: %s", pret->token_start);
+	pret->error_code	= 1;
 }
 
 %type pair	{ json_pair_t }

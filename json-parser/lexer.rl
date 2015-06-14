@@ -178,6 +178,7 @@ json_parse(const char* str)
 	char		tmp[4096];
 
 	parser_.root	= NULL;
+	parser_.error_code	= 0;
 
 	yyparser	= parser_alloc(malloc);
 
@@ -190,11 +191,15 @@ json_parse(const char* str)
 	/* Check if we failed. */
 	if ( cs == scanner_error ) {
 		/* Machine failed before finding a token. */
-		printf("PARSE ERROR\n");
+//		printf("PARSE ERROR\n");
 		return parser_.root;	/* failed! */
 	}
 
 	parser_advance(yyparser, 0, NULL, &parser_);
+
+	if( parser_.error_code != 0 ) {
+		return NULL;
+	}
 
 	parser_free(yyparser, free);
 	return parser_.root;
