@@ -181,8 +181,8 @@ test_fail() {
 
 int
 main(int argc, char* argv[]) {
-//	test_simple_object();
-//	test_simple_object2();
+	test_simple_object();
+	test_simple_object2();
 //	test_twitter();
 //	test_canada();
 //	test_citm_catalog();

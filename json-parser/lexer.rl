@@ -206,6 +206,10 @@ json_parse(const char* str)
 
 	if( parser_.error_code != 0 ) {
 		parser_free(yyparser, free);
+		for( size_t c = 0; c < parser_.processed.count; ++c ) {
+			json_free(parser_.processed.array[c]);
+		}
+		json_value_array_release(&parser_.processed);
 		return NULL;
 	}
 
