@@ -133,11 +133,11 @@ fail_tests[] = {
 //	"jsonchecker/fail03.json",
 //	"jsonchecker/fail04.json",
 //	"jsonchecker/fail05.json",
-	"jsonchecker/fail06.json",
-//	"jsonchecker/fail07.json",
-//	"jsonchecker/fail08.json",
+//	"jsonchecker/fail06.json",
+	"jsonchecker/fail07.json",
+	"jsonchecker/fail08.json",
 //	"jsonchecker/fail09.json",
-//	"jsonchecker/fail10.json",
+	"jsonchecker/fail10.json",
 //	"jsonchecker/fail11.json",
 //	"jsonchecker/fail12.json",
 //	"jsonchecker/fail13.json",
@@ -173,6 +173,7 @@ test_fail() {
 		json_value_t*	val	= json_parse(test);
 		if(val != NULL) {
 			fprintf(stderr, "test %s is passing! should be failing!\n", fail_tests[t]);
+			json_free(val);
 		}
 		free(test);
 	}

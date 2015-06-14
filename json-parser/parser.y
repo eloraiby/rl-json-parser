@@ -34,15 +34,15 @@
 
 #include "parser.h"
 #include "private/private.h"
+
+#define SAVE(A)	json_value_array_push(&(pret->processed), A)
 }
 
 %parse_failure {
-	fprintf(stderr, "error starting @: %s", pret->token_start);
-	pret->error_code	= 1;
+	pret->error_code	= 2;
 }
 
 %syntax_error {
-	fprintf(stderr, "error starting @: %s", pret->token_start);
 	pret->error_code	= 1;
 }
 
@@ -53,17 +53,6 @@
 %type array	{ json_value_t* }
 %type value	{ json_value_t* }
 
-%destructor pair	{ free($$.key); json_free($$.value); }
-%destructor members	{ json_free($$); }
-%destructor elements	{ json_free($$); }
-%destructor array	{ json_free($$); }
-%destructor object	{ json_free($$); }
-%destructor value	{ json_free($$); }
-
-%token_destructor { json_free($$); }
-
-%token_type	{ json_value_t* }
-
 
 %start_symbol root
 
@@ -72,24 +61,24 @@ root		::= object(B).			{ pret->root = B; }
 root		::= array(B).			{ pret->root = B; }
 
 /* literals */
-pair(A)		::= JSON_TOK_STRING(B) JSON_TOK_COL value(C).	{ A = json_pair(B->value.string, C); free(B); }
+pair(A)		::= JSON_TOK_STRING(B) JSON_TOK_COL value(C).	{ A = json_pair((char*)B, C); }
 
-members(A)	::= pair(B).				{ A = json_object(); json_add_pair(B, A); }
+members(A)	::= pair(B).				{ A = json_object(); json_add_pair(B, A); SAVE(A); }
 members(A)	::= members(B) JSON_TOK_COMMA pair(C).	{ A = json_add_pair(C, B); }
 
-object(A)	::= JSON_TOK_LBRACK JSON_TOK_RBRACK.	{ A = json_object();	}
+object(A)	::= JSON_TOK_LBRACK JSON_TOK_RBRACK.	{ A = json_object(); SAVE(A); }
 object(A)	::= JSON_TOK_LBRACK members(B) JSON_TOK_RBRACK.	{ A = B; }
 
-array(A)	::= JSON_TOK_LSQB JSON_TOK_RSQB.	{ A = json_array();	}
+array(A)	::= JSON_TOK_LSQB JSON_TOK_RSQB.	{ A = json_array(); SAVE(A); }
 array(A)	::= JSON_TOK_LSQB elements(B) JSON_TOK_RSQB.	{ A = B; }
 
-elements(A)	::= value(B).				{ A = json_array(); json_add_element(B, A); }
+elements(A)	::= value(B).				{ A = json_array(); json_add_element(B, A); SAVE(A); }
 elements(A)	::= elements(B) JSON_TOK_COMMA value(C).{ A = json_add_element(C, B); }
 
-value(A)	::= JSON_TOK_STRING(B).			{ A = B; }
-value(A)	::= JSON_TOK_NUMBER(B).			{ A = B; }
-value(A)	::= JSON_TOK_BOOLEAN(B).		{ A = B; }
-value(A)	::= JSON_TOK_NONE(B).			{ A = B; }
-value(A)	::= object(B).				{ A = B; }
-value(A)	::= array(B).				{ A = B; }
+value(A)	::= JSON_TOK_STRING(B).			{ A = json_string(B); SAVE(A); }
+value(A)	::= JSON_TOK_NUMBER(B).			{ A = B; SAVE(A); }
+value(A)	::= JSON_TOK_BOOLEAN(B).		{ A = B; SAVE(A); }
+value(A)	::= JSON_TOK_NONE(B).			{ A = B; SAVE(A); }
+value(A)	::= object(B).				{ A = B; SAVE(A); }
+value(A)	::= array(B).				{ A = B; SAVE(A); }
 

@@ -32,19 +32,30 @@ extern void	parser_free(void *p, void (*freeProc)(void*));
 extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_parser_t* s);
 
 
-#define ADVANCE(A, T)	parser_.token_start	= ts; \
-			parser_.token_end	= te; \
-			parser_.token_line	= line; \
-			copy_token(ts, te, tmp); \
-			json_value_t* tmpc = token_to_##A(tmp); \
-			parser_advance(yyparser, T, tmpc, &parser_)
+#define ADVANCE(A, T)	if( parser_.error_code == 0) { \
+				parser_.token_start	= ts; \
+				parser_.token_end	= te; \
+				parser_.token_line	= line; \
+				copy_token(ts, te, tmp); \
+				json_value_t* tmpc = token_to_##A(tmp); \
+				parser_advance(yyparser, T, tmpc, &parser_); \
+			} else p = pe - 1
 
-#define ADVANCE_TOKEN(A)	parser_advance(yyparser, A, NULL, &parser_)
+#define ADVANCE_STRING(T) if( parser_.error_code == 0) { \
+				const char* tmp_te = te; \
+				const char* tmp_ts = ts; \
+				++ts; --te; \
+				parser_.token_start	= ts; \
+				parser_.token_end	= te; \
+				parser_.token_line	= line; \
+				char* tmpc = (char*)malloc(te - ts + 1); \
+				copy_token(ts, te, tmpc); \
+				parser_advance(yyparser, T, tmpc, &parser_); \
+				ts	= tmp_ts; \
+				te	= tmp_te; \
+			} else p = pe - 1
 
-#define PUSH_TE()	const char* tmp_te = te
-#define POP_TE()	te	= tmp_te
-#define PUSH_TS()	const char* tmp_ts = ts
-#define POP_TS()	ts	= tmp_ts
+#define ADVANCE_TOKEN(A)	if( parser_.error_code == 0) parser_advance(yyparser, A, NULL, &parser_); else p = pe - 1
 
 /* EOF char used to flush out that last token. This should be a whitespace
  * token. */
@@ -67,17 +78,10 @@ extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_p
 	main := |*
 		'true'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
 		'false'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
-		'null'						{ ADVANCE( none, JSON_TOK_NONE ); };
+		'null'						{ ADVANCE( none,    JSON_TOK_NONE    );};
 
 		# string.
-		( '"' ( [^"\\\n] | /\\./ )* '"' )		{
-									PUSH_TE();
-									PUSH_TS();
-									++ts; --te;
-									ADVANCE(string, JSON_TOK_STRING);
-									POP_TS();
-									POP_TE();
-								};
+		( '"' ( [^"\\\n] | /\\./ )* '"' )		{ ADVANCE_STRING(JSON_TOK_STRING); };
 
 
 		# Integer decimal. Leading part buffered by float.
@@ -99,10 +103,10 @@ extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_p
 		# Only buffer the second item, first buffered by symbol. */
 		'{'						{ ADVANCE_TOKEN( JSON_TOK_LBRACK );};
 		'}'						{ ADVANCE_TOKEN( JSON_TOK_RBRACK );};
-		'['						{ ADVANCE_TOKEN( JSON_TOK_LSQB );};
-		']'						{ ADVANCE_TOKEN( JSON_TOK_RSQB );};
-		':'						{ ADVANCE_TOKEN( JSON_TOK_COL );};
-		','						{ ADVANCE_TOKEN( JSON_TOK_COMMA );};
+		'['						{ ADVANCE_TOKEN( JSON_TOK_LSQB   );};
+		']'						{ ADVANCE_TOKEN( JSON_TOK_RSQB   );};
+		':'						{ ADVANCE_TOKEN( JSON_TOK_COL    );};
+		','						{ ADVANCE_TOKEN( JSON_TOK_COMMA  );};
 
 		'\n'						{ ++line; };
 
@@ -125,14 +129,6 @@ copy_token(const char* ts, const char *te, char* dst) {
 	}
 	dst[index] = '\0';
 	return index;
-}
-
-static json_value_t*
-token_to_string(const char* b) {
-	size_t	len	= strlen(b);
-	char*	str = (char*)malloc(len + 1);
-	memcpy(str, b, len + 1);
-	return json_string(str);
 }
 
 static json_value_t*
@@ -182,6 +178,7 @@ json_parse(const char* str)
 	parser_.token_start	= ts;
 	parser_.token_end	= te;
 	parser_.token_line	= line;
+	parser_.processed	= json_value_array_new();
 
 	yyparser	= parser_alloc(malloc);
 
@@ -195,11 +192,17 @@ json_parse(const char* str)
 	if ( cs == scanner_error ) {
 		/* Machine failed before finding a token. */
 		printf("PARSE ERROR\n");
+		parser_advance(yyparser, 0, NULL, &parser_);
 		parser_free(yyparser, free);
 		return parser_.root;	/* failed! */
 	}
 
 	parser_advance(yyparser, 0, NULL, &parser_);
+
+	if( parser_.error_code == 1 ) {
+		while( parser_.error_code == 1 )
+			parser_advance(yyparser, 0, NULL, &parser_);
+	}
 
 	if( parser_.error_code != 0 ) {
 		parser_free(yyparser, free);

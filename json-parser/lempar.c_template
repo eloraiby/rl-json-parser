@@ -840,7 +840,7 @@ void Parse_advance(
       yypParser->yyerrcnt = 3;
       yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
       if( yyendofinput ){
-        yy_parse_failed(yypParser);
+	yy_parse_failed(yypParser);
       }
       yymajor = YYNOCODE;
 #endif

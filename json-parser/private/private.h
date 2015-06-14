@@ -27,6 +27,8 @@ typedef struct {
 	int			token_line;
 	int			error_code;	/* 0 : no error */
 
+	json_value_array_t	processed;	/* these are released on error */
+
 	json_value_t*	root;
 } json_parser_t;
 
