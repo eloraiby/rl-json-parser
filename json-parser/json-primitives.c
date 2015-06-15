@@ -23,10 +23,19 @@
 
 #include "./private/private.h"
 
+static inline json_value_t*
+json_alloc() {
+	json_value_t*	v	= (json_value_t*)malloc(sizeof(json_value_t));
+	memset(v, 0, sizeof(json_value_t));
+	return v;
+}
+
 json_pair_t
-json_pair		(char* key, json_value_t* value) {
+json_pair		(token_t key, json_value_t* value) {
 	json_pair_t	pair;
-	pair.key	= key;
+	pair.key	= (char*)malloc(key.string.e - key.string.s + 1);
+	memcpy(pair.key, key.string.s, key.string.e - key.string.s);
+	pair.key[key.string.e - key.string.s]	= '\0';
 	pair.value	= value;
 	return pair;
 }
@@ -34,7 +43,7 @@ json_pair		(char* key, json_value_t* value) {
 
 json_value_t*
 json_object		() {
-	json_value_t*	object	= (json_value_t*)malloc(sizeof(json_value_t));
+	json_value_t*	object	= json_alloc();
 	object->tag	= JSON_OBJECT;
 	object->value.members	= json_pair_array_new();
 	return object;
@@ -49,7 +58,7 @@ json_add_pair		(json_pair_t p, json_value_t* v) {
 
 json_value_t*
 json_array		() {
-	json_value_t*	arr	= (json_value_t*)malloc(sizeof(json_value_t));
+	json_value_t*	arr	= json_alloc();
 	arr->tag	= JSON_ARRAY;
 	arr->value.array	= json_value_array_new();
 
@@ -65,7 +74,7 @@ json_add_element	(json_value_t* e, json_value_t* v) {
 
 json_value_t*
 json_boolean		(bool b) {
-	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+	json_value_t*	ret = json_alloc();
 	ret->tag	= JSON_BOOLEAN;
 	ret->value.boolean	= b;
 	return ret;
@@ -73,23 +82,26 @@ json_boolean		(bool b) {
 
 json_value_t*
 json_number			(double n) {
-	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+	json_value_t*	ret = json_alloc();
 	ret->tag	= JSON_NUMBER;
 	ret->value.number	= n;
 	return ret;
 }
 
 json_value_t*
-json_string			(char* str) {
-	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+json_string			(token_t key) {
+	json_value_t*	ret = json_alloc();
 	ret->tag	= JSON_STRING;
-	ret->value.string	= str;
+	ret->value.string	= (char*)malloc(key.string.e - key.string.s + 1);
+	memcpy(ret->value.string, key.string.s, key.string.e - key.string.s);
+	ret->value.string[key.string.e - key.string.s]	= '\0';
+
 	return ret;
 }
 
 json_value_t*
 json_none			()  {
-	json_value_t*	ret = (json_value_t*)malloc(sizeof(json_value_t));
+	json_value_t*	ret = json_alloc();
 	ret->tag	= JSON_NONE;
 	return ret;
 }

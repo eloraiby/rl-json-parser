@@ -27,11 +27,10 @@
 #include <assert.h>
 
 #include "private/private.h"
-#include "parser.h"
 
 extern void*	parser_alloc(void *(*mallocProc)(size_t));
 extern void	parser_free(void *p, void (*freeProc)(void*));
-extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_parser_t* s);
+extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_t* s);
 
 
 #define ADVANCE(A, T)	if( parser_.error_code == 0) { \
@@ -39,7 +38,7 @@ extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_p
 				parser_.token_end	= te; \
 				parser_.token_line	= line; \
 				copy_token(ts, te, tmp); \
-				json_value_t* tmpc = token_to_##A(tmp); \
+				token_t tmpc = token_to_##A(tmp); \
 				parser_advance(yyparser, T, tmpc, &parser_); \
 			} else p = pe - 1
 
@@ -50,14 +49,13 @@ extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_p
 				parser_.token_start	= ts; \
 				parser_.token_end	= te; \
 				parser_.token_line	= line; \
-				char* tmpc = (char*)malloc(te - ts + 1); \
-				copy_token(ts, te, tmpc); \
+				token_t tmpc = token_to_string(ts, te); \
 				parser_advance(yyparser, T, tmpc, &parser_); \
 				ts	= tmp_ts; \
 				te	= tmp_te; \
 			} else p = pe - 1
 
-#define ADVANCE_TOKEN(A)	if( parser_.error_code == 0) parser_advance(yyparser, A, NULL, &parser_); else p = pe - 1
+#define ADVANCE_TOKEN(A)	if( parser_.error_code == 0) { token_t t; t.tok_type = A; parser_advance(yyparser, A, t, &parser_); } else p = pe - 1
 
 /* EOF char used to flush out that last token. This should be a whitespace
  * token. */
@@ -66,7 +64,7 @@ extern void	parser_advance(void *yyp, int yymajor, json_value_t* yyminor, json_p
 
 
 
-#line 70 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 68 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 static const char _scanner_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 4, 1, 10, 1, 11, 1, 
@@ -190,7 +188,7 @@ static const int scanner_en_c_comment = 17;
 static const int scanner_en_main = 19;
 
 
-#line 121 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 119 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 
 
 static int
@@ -204,26 +202,43 @@ copy_token(const char* ts, const char *te, char* dst) {
 	return index;
 }
 
-static json_value_t*
+static token_t
 token_to_boolean(const char* b) {
+	token_t	t;
+	t.tok_type	= JSON_TOK_BOOLEAN;
 	if( !strcmp(b, "true") ) {
-		return json_boolean(true);
+		t.boolean	= true;
 	} else {
-		return json_boolean(false);
+		t.boolean	= false;
 	}
+	return t;
 }
 
-static json_value_t*
+static token_t
 token_to_number(const char* r) {
+	token_t	t;
 	double	v	= 0.0;
+	t.tok_type	= JSON_TOK_NUMBER;
 	sscanf(r, "%lf", &v);
 	/* TODO: check limit */
-	return json_number(v);
+	t.number	= v;
+	return t;
 }
 
-static json_value_t*
+static token_t
 token_to_none(const char* str) {
-	return json_none();
+	token_t	t;
+	t.tok_type	= JSON_TOK_NONE;
+	return t;
+}
+
+static token_t
+token_to_string(const char* ts, const char* te) {
+	token_t	t;
+	t.tok_type	= JSON_TOK_STRING;
+	t.string.s	= ts;
+	t.string.e	= te;
+	return t;
 }
 
 
@@ -246,19 +261,22 @@ json_parse(const char* str)
 	int		cs	= 0;
 	char		tmp[4096];
 
-	parser_.root	= NULL;
+	token_t		dummy;
+	dummy.tok_type	= 0;
+
+	parser_.root		= NULL;
 	parser_.error_code	= 0;
 	parser_.token_start	= ts;
 	parser_.token_end	= te;
 	parser_.token_line	= line;
-	parser_.processed	= json_value_array_new();
+	parser_.head		= NULL;
 
 	yyparser	= parser_alloc(malloc);
 
 	memset(tmp, 0, sizeof(tmp));
 
 	
-#line 262 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 280 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 	{
 	cs = scanner_start;
 	ts = 0;
@@ -266,10 +284,10 @@ json_parse(const char* str)
 	act = 0;
 	}
 
-#line 188 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 206 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 
 	
-#line 273 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 291 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -290,7 +308,7 @@ _resume:
 #line 1 "NONE"
 	{ts = p;}
 	break;
-#line 294 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 312 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -357,11 +375,11 @@ _eof_trans:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 74 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 72 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{ ++line; }
 	break;
 	case 1:
-#line 76 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 74 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{ {cs = 19; goto _again;} }
 	break;
 	case 4:
@@ -369,83 +387,83 @@ _eof_trans:
 	{te = p+1;}
 	break;
 	case 5:
-#line 88 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 86 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{act = 5;}
 	break;
 	case 6:
-#line 90 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 88 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{act = 6;}
 	break;
 	case 7:
-#line 101 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 99 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{act = 7;}
 	break;
 	case 8:
-#line 111 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 109 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{act = 14;}
 	break;
 	case 9:
-#line 119 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 117 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{act = 18;}
 	break;
 	case 10:
-#line 79 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 77 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE( boolean, JSON_TOK_BOOLEAN );}}
 	break;
 	case 11:
-#line 80 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 78 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE( boolean, JSON_TOK_BOOLEAN );}}
 	break;
 	case 12:
-#line 81 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 79 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE( none,    JSON_TOK_NONE    );}}
 	break;
 	case 13:
-#line 84 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 82 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE_STRING(JSON_TOK_STRING); }}
 	break;
 	case 14:
-#line 104 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 102 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE_TOKEN( JSON_TOK_LBRACK );}}
 	break;
 	case 15:
-#line 105 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 103 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE_TOKEN( JSON_TOK_RBRACK );}}
 	break;
 	case 16:
-#line 106 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 104 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE_TOKEN( JSON_TOK_LSQB   );}}
 	break;
 	case 17:
-#line 107 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 105 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE_TOKEN( JSON_TOK_RSQB   );}}
 	break;
 	case 18:
-#line 108 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 106 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE_TOKEN( JSON_TOK_COL    );}}
 	break;
 	case 19:
-#line 109 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 107 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ ADVANCE_TOKEN( JSON_TOK_COMMA  );}}
 	break;
 	case 20:
-#line 114 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 112 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ printf("unexpected character %c\n", *ts); }}
 	break;
 	case 21:
-#line 117 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 115 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;{ {cs = 17; goto _again;} }}
 	break;
 	case 22:
-#line 118 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 116 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p+1;}
 	break;
 	case 23:
-#line 88 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 86 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p;p--;{ ADVANCE( number, JSON_TOK_NUMBER ); }}
 	break;
 	case 24:
-#line 90 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 88 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p;p--;{
 									fprintf(stderr, "Error: invalid number:\n    ");
 
@@ -457,19 +475,19 @@ _eof_trans:
 								}}
 	break;
 	case 25:
-#line 101 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 99 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p;p--;{ ADVANCE( number, JSON_TOK_NUMBER );}}
 	break;
 	case 26:
-#line 114 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 112 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{te = p;p--;{ printf("unexpected character %c\n", *ts); }}
 	break;
 	case 27:
-#line 88 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 86 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{{p = ((te))-1;}{ ADVANCE( number, JSON_TOK_NUMBER ); }}
 	break;
 	case 28:
-#line 114 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 112 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 	{{p = ((te))-1;}{ printf("unexpected character %c\n", *ts); }}
 	break;
 	case 29:
@@ -501,7 +519,7 @@ _eof_trans:
 	}
 	}
 	break;
-#line 505 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 523 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -514,7 +532,7 @@ _again:
 #line 1 "NONE"
 	{ts = 0;}
 	break;
-#line 518 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
+#line 536 "/home/aifu/Projects/json-parser/json-parser/lexer.c"
 		}
 	}
 
@@ -534,30 +552,30 @@ _again:
 	_out: {}
 	}
 
-#line 190 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
+#line 208 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
 
 	/* Check if we failed. */
 	if ( cs == scanner_error ) {
 		/* Machine failed before finding a token. */
 		printf("PARSE ERROR\n");
-		parser_advance(yyparser, 0, NULL, &parser_);
-		parser_free(yyparser, free);
-		return parser_.root;	/* failed! */
+		parser_.error_code = 1;
 	}
 
-	parser_advance(yyparser, 0, NULL, &parser_);
+	parser_advance(yyparser, 0, dummy, &parser_);
 
 	if( parser_.error_code == 1 ) {
 		while( parser_.error_code == 1 )
-			parser_advance(yyparser, 0, NULL, &parser_);
+			parser_advance(yyparser, 0, dummy, &parser_);
 	}
 
 	if( parser_.error_code != 0 ) {
 		parser_free(yyparser, free);
-		for( size_t c = 0; c < parser_.processed.count; ++c ) {
-			json_free(parser_.processed.array[c]);
-		}
-		json_value_array_release(&parser_.processed);
+//		while( parser_.head ) {
+//			json_value_t*	next	= parser_.head->next;
+//			json_free(parser_.head);
+//			parser_.head	= next;
+//		}
+
 		return NULL;
 	}
 

@@ -91,7 +91,7 @@ DECLARE_ARRAY(json_pair_array, json_pair_t)
 DECLARE_ARRAY(json_value_array, struct json_value_s*)
 
 typedef struct json_value_s {
-	JSON_TYPE			tag;
+	JSON_TYPE		tag;
 
 	union {
 		bool			boolean;
@@ -101,7 +101,48 @@ typedef struct json_value_s {
 		json_pair_array_t	members;
 		json_value_array_t	array;
 	} value;
+
+	struct json_value_s*	prev;
+	struct json_value_s*	next;
 } json_value_t;
+
+/* return new_node */
+static inline json_value_t*
+json_insert_before(json_value_t* new_node, json_value_t* node) {
+	if( node != NULL ) {
+		json_value_t*	prev	= node->prev;
+
+		if( prev ) {
+			prev->next	= new_node;
+			new_node->prev	= prev;
+		}
+		node->prev	= new_node;
+		new_node->next	= node;
+	} else {
+		/* nothing to do */
+	}
+
+	return new_node;
+}
+
+static inline json_value_t*
+json_dereference(json_value_t* node) {
+	if( node ) {
+		json_value_t*	prev	= node->prev;
+		json_value_t*	next	= node->next;
+
+		if( prev ) {
+			prev->next	= next;
+			node->prev	= NULL;
+		}
+
+		if( next ) {
+			next->prev	= prev;
+			node->next	= NULL;
+		}
+	}
+	return node;
+}
 
 extern json_value_t*	json_parse(const char* str);
 extern void		json_free(json_value_t*);

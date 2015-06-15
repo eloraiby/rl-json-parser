@@ -20,6 +20,21 @@
 #define JSON_PRIVATE_H
 
 #include "../json-parser.h"
+#include "../parser.h"
+
+typedef struct {
+	int	tok_type;
+	union {
+		double	number;
+		struct {
+			const char* s;
+			const char* e;
+		} string;
+
+		bool	boolean;
+	};
+} token_t;
+
 
 typedef struct {
 	const char*		token_start;
@@ -27,13 +42,13 @@ typedef struct {
 	int			token_line;
 	int			error_code;	/* 0 : no error */
 
-	json_value_array_t	processed;	/* these are released on error */
+	json_value_t*	head;	/* list: these are released on error */
 
 	json_value_t*	root;
 } json_parser_t;
 
 
-json_pair_t		json_pair		(char* key, json_value_t* value);
+json_pair_t		json_pair		(token_t key, json_value_t* value);
 json_value_t*		json_add_pair		(json_pair_t, json_value_t* /* object */);
 json_value_t*		json_add_element	(json_value_t* /* value */, json_value_t* /* array */);
 
@@ -41,7 +56,7 @@ json_value_t*		json_object		();
 json_value_t*		json_array		();
 json_value_t*		json_boolean		(bool);
 json_value_t*		json_number		(double);
-json_value_t*		json_string		(char*);
+json_value_t*		json_string		(token_t key);
 json_value_t*		json_none		();
 
 #endif // JSON_PRIVATE_H
