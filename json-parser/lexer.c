@@ -40,7 +40,7 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 				copy_token(ts, te, tmp); \
 				token_t tmpc = token_to_##A(tmp); \
 				parser_advance(yyparser, T, tmpc, &parser_); \
-			} else p = pe - 1
+			} else cs	= scanner_error
 
 #define ADVANCE_STRING(T) if( parser_.error_code == 0) { \
 				const char* tmp_te = te; \
@@ -53,7 +53,7 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 				parser_advance(yyparser, T, tmpc, &parser_); \
 				ts	= tmp_ts; \
 				te	= tmp_te; \
-			} else p = pe - 1
+			} else cs	= scanner_error
 
 #define ADVANCE_TOKEN(A)	if( parser_.error_code == 0) { token_t t; t.tok_type = A; parser_advance(yyparser, A, t, &parser_); } else p = pe - 1
 
@@ -557,7 +557,6 @@ _again:
 	/* Check if we failed. */
 	if ( cs == scanner_error ) {
 		/* Machine failed before finding a token. */
-		printf("PARSE ERROR\n");
 		parser_.error_code = 1;
 	}
 
@@ -570,11 +569,10 @@ _again:
 
 	if( parser_.error_code != 0 ) {
 		parser_free(yyparser, free);
-//		while( parser_.head ) {
-//			json_value_t*	next	= parser_.head->next;
-//			json_free(parser_.head);
-//			parser_.head	= next;
-//		}
+
+		if( parser_.root ) {
+			json_free(parser_.root);
+		}
 
 		return NULL;
 	}
