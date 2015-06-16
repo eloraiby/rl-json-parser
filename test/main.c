@@ -69,7 +69,7 @@ dump(json_value_t* v, int level) {
 void
 test_simple_object() {
 	const char*		json_str	= "{\n\"key\":\"value\"\n}";
-	json_value_t*	val			= json_parse(json_str);
+	json_value_t*	val			= json_parse(json_str).value;
 	dump(val, 0);
 	json_free(val);
 }
@@ -77,7 +77,7 @@ test_simple_object() {
 void
 test_simple_object2() {
 	const char*		json_str	= "{\n\"key\":\"value\",\n\"key2\":\"value2\"\n,\"key3\":23.4}";
-	json_value_t*	val			= json_parse(json_str);
+	json_value_t*	val			= json_parse(json_str).value;
 	dump(val, 0);
 	json_free(val);
 }
@@ -102,7 +102,7 @@ load_file(const char* filename) {
 void
 test_twitter() {
 	char*	twitter	= load_file("twitter.json");
-	json_value_t*	val	= json_parse(twitter);
+	json_value_t*	val	= json_parse(twitter).value;
 	json_free(val);
 	free(twitter);
 }
@@ -110,7 +110,7 @@ test_twitter() {
 void
 test_canada() {
 	char*	canada	= load_file("canada.json");
-	json_value_t*	val	= json_parse(canada);
+	json_value_t*	val	= json_parse(canada).value;
 	json_free(val);
 	free(canada);
 }
@@ -118,7 +118,7 @@ test_canada() {
 void
 test_citm_catalog() {
 	char*	citm_catalog	= load_file("citm_catalog.json");
-	json_value_t*	val	= json_parse(citm_catalog);
+	json_value_t*	val	= json_parse(citm_catalog).value;
 	json_free(val);
 	free(citm_catalog);
 }
@@ -166,7 +166,7 @@ void
 test_fail() {
 	for( size_t t = 0; t < sizeof(fail_tests) / sizeof(char*); ++t ) {
 		char*	test = load_file(fail_tests[t]);
-		json_value_t*	val	= json_parse(test);
+		json_value_t*	val	= json_parse(test).value;
 		if(val != NULL) {
 			fprintf(stderr, "test %s is passing! should be failing!\n", fail_tests[t]);
 			json_free(val);

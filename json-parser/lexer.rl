@@ -169,10 +169,13 @@ token_to_string(const char* ts, const char* te) {
 }
 
 
-json_value_t*
+json_return_t
 json_parse(const char* str)
 {
 	json_parser_t		parser_;
+	json_return_t		ret;
+	ret.status	= JSON_INVALID_INPUT;
+	ret.value	= NULL;
 
 	void*		yyparser;
 	size_t		line	= 1;
@@ -225,10 +228,12 @@ json_parse(const char* str)
 			json_free(parser_.root);
 		}
 
-		return NULL;
+		return ret;
 	}
 
 	parser_free(yyparser, free);
-	return parser_.root;
+	ret.status	= JSON_SUCCESS;
+	ret.value	= parser_.root;
+	return ret;
 }
 

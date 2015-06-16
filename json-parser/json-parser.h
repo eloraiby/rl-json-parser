@@ -73,10 +73,11 @@ extern "C" {
 
 typedef enum {
 	JSON_SUCCESS,
+	JSON_INVALID_INPUT,
 	JSON_ERROR_SYNTAX_ERROR,
 	JSON_INVALID_CHARACTER,
 	JSON_INVALID_NUMBER,
-} JSON_ERROR;
+} JSON_STATUS;
 
 typedef enum {
 	JSON_STRING,
@@ -111,7 +112,12 @@ typedef struct json_value_s {
 
 } json_value_t;
 
-extern json_value_t*	json_parse(const char* str);
+typedef struct {
+	JSON_STATUS	status;
+	json_value_t*	value;
+} json_return_t;
+
+extern json_return_t	json_parse(const char* str);
 extern void		json_free(json_value_t*);
 #ifdef __cplusplus
 }
