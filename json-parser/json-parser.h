@@ -72,6 +72,13 @@ extern "C" {
 #endif
 
 typedef enum {
+	JSON_SUCCESS,
+	JSON_ERROR_SYNTAX_ERROR,
+	JSON_INVALID_CHARACTER,
+	JSON_INVALID_NUMBER,
+} JSON_ERROR;
+
+typedef enum {
 	JSON_STRING,
 	JSON_NUMBER,
 	JSON_OBJECT,
@@ -100,7 +107,7 @@ typedef struct json_value_s {
 		json_pair_t		pair;
 		json_pair_array_t	members;
 		json_value_array_t	array;
-	} value;
+	};
 
 } json_value_t;
 

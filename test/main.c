@@ -21,10 +21,10 @@ dump(json_value_t* v, int level) {
 	switch( v->tag ) {
 	case JSON_ARRAY:
 		print_level(level, "[");
-		for( size_t i = 0; i < v->value.array.count; ++i ) {
-			dump(v->value.array.array[i], 0);
+		for( size_t i = 0; i < v->array.count; ++i ) {
+			dump(v->array.array[i], 0);
 
-			if( i < v->value.array.count - 1) {
+			if( i < v->array.count - 1) {
 				printf(", ");
 			}
 		}
@@ -33,7 +33,7 @@ dump(json_value_t* v, int level) {
 		break;
 
 	case JSON_BOOLEAN:
-		if( v->value.boolean ) {
+		if( v->boolean ) {
 			print_level(level, "true");
 		} else {
 			print_level(level, "false");
@@ -42,17 +42,17 @@ dump(json_value_t* v, int level) {
 
 	case JSON_NONE:		print_level(level, "none"); break;
 
-	case JSON_NUMBER:	print_level(level, "%lf", v->value.number); break;
+	case JSON_NUMBER:	print_level(level, "%lf", v->number); break;
 
 	case JSON_OBJECT:
 		print_level(level, "{\n");
-		for( size_t i = 0; i < v->value.members.count; ++i ) {
-			print_level(0, "\"%s\"", v->value.members.array[i].key);
+		for( size_t i = 0; i < v->members.count; ++i ) {
+			print_level(0, "\"%s\"", v->members.array[i].key);
 			printf(" : ");
-			dump(v->value.members.array[i].value, 0);
+			dump(v->members.array[i].value, 0);
 
 
-			if( i < v->value.members.count - 1) {
+			if( i < v->members.count - 1) {
 				printf(", ");
 			}
 		}
@@ -60,7 +60,7 @@ dump(json_value_t* v, int level) {
 		print_level(level, "\n}");
 		break;
 
-	case JSON_STRING:	print_level(level, "\"%s\"", v->value.string); break;
+	case JSON_STRING:	print_level(level, "\"%s\"", v->string); break;
 
 	default: break;
 	}
@@ -103,7 +103,6 @@ void
 test_twitter() {
 	char*	twitter	= load_file("twitter.json");
 	json_value_t*	val	= json_parse(twitter);
-	dump(val, 0);
 	json_free(val);
 	free(twitter);
 }
@@ -112,7 +111,6 @@ void
 test_canada() {
 	char*	canada	= load_file("canada.json");
 	json_value_t*	val	= json_parse(canada);
-	dump(val, 0);
 	json_free(val);
 	free(canada);
 }
@@ -121,7 +119,6 @@ void
 test_citm_catalog() {
 	char*	citm_catalog	= load_file("citm_catalog.json");
 	json_value_t*	val	= json_parse(citm_catalog);
-	dump(val, 0);
 	json_free(val);
 	free(citm_catalog);
 }
