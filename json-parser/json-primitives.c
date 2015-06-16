@@ -89,12 +89,12 @@ json_number			(double n) {
 }
 
 json_value_t*
-json_string			(token_t key) {
+json_string			(const char *s, const char *e) {
 	json_value_t*	ret = json_alloc();
 	ret->tag	= JSON_STRING;
-	ret->value.string	= (char*)malloc(key.string.e - key.string.s + 1);
-	memcpy(ret->value.string, key.string.s, key.string.e - key.string.s);
-	ret->value.string[key.string.e - key.string.s]	= '\0';
+	ret->value.string	= (char*)malloc(e - s + 1);
+	memcpy(ret->value.string, s, e - s);
+	ret->value.string[e - s]	= '\0';
 
 	return ret;
 }

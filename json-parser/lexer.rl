@@ -196,7 +196,6 @@ json_parse(const char* str)
 	parser_.token_start	= ts;
 	parser_.token_end	= te;
 	parser_.token_line	= line;
-	parser_.head		= NULL;
 
 	yyparser	= parser_alloc(malloc);
 

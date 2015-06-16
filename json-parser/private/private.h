@@ -37,12 +37,10 @@ typedef struct {
 
 
 typedef struct {
-	const char*		token_start;
-	const char*		token_end;
-	int			token_line;
-	int			error_code;	/* 0 : no error */
-
-	json_value_t*	head;	/* list: these are released on error */
+	const char*	token_start;
+	const char*	token_end;
+	int		token_line;
+	int		error_code;	/* 0 : no error */
 
 	json_value_t*	root;
 } json_parser_t;
@@ -56,7 +54,7 @@ json_value_t*		json_object		();
 json_value_t*		json_array		();
 json_value_t*		json_boolean		(bool);
 json_value_t*		json_number		(double);
-json_value_t*		json_string		(token_t key);
+json_value_t*		json_string		(const char* s, const char* e);
 json_value_t*		json_none		();
 
 #endif // JSON_PRIVATE_H

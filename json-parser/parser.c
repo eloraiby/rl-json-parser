@@ -757,7 +757,7 @@ static void yy_reduce(
         break;
       case 11: /* value ::= JSON_TOK_STRING */
 #line 86 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy14 = json_string(yymsp[0].minor.yy0);		}
+{ yygotominor.yy14 = json_string(yymsp[0].minor.yy0.string.s, yymsp[0].minor.yy0.string.e); }
 #line 762 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 12: /* value ::= JSON_TOK_NUMBER */
