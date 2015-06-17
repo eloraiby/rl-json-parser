@@ -87,6 +87,7 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 
 		( [+\-]? ( '0' | [1-9] [0-9]* ) [a-zA-Z_]+ )	{
 									fprintf(stderr, "Error: invalid number:\n    ");
+									ret.status	= JSON_INVALID_NUMBER;
 
 									for( i = ts; i < te; ++i ) {
 										fprintf(stderr, "%c", *i);
@@ -109,7 +110,7 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 		'\n'						{ ++line; };
 
 		# Single char symbols.
-		( punct - [_"'] )				{ printf("unexpected character %c\n", *ts); };
+		( punct - [_"'] )				{ ret.status = JSON_INVALID_CHARACTER; printf("unexpected character %c\n", *ts); };
 
 		# Comments and whitespace.
 		'/*'						{ fgoto c_comment; };
@@ -222,6 +223,8 @@ json_parse(const char* str)
 	}
 
 	if( parser_.error_code != 0 ) {
+		ret.status	= JSON_ERROR_SYNTAX_ERROR;
+
 		parser_free(yyparser, free);
 
 		if( parser_.root ) {
