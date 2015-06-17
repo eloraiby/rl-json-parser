@@ -25,13 +25,9 @@
 typedef struct {
 	int	tok_type;
 	union {
-		double	number;
-		struct {
-			const char* s;
-			const char* e;
-		} string;
-
-		bool	boolean;
+		double		number;
+		bool		boolean;
+		string_t	string;
 	};
 } token_t;
 
@@ -54,7 +50,7 @@ json_value_t*		json_object		();
 json_value_t*		json_array		();
 json_value_t*		json_boolean		(bool);
 json_value_t*		json_number		(double);
-json_value_t*		json_string		(const char* s, const char* e);
+json_value_t*		json_string		(string_t);
 json_value_t*		json_none		();
 
 #endif // JSON_PRIVATE_H

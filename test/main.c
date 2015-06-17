@@ -47,7 +47,12 @@ dump(json_value_t* v, int level) {
 	case JSON_OBJECT:
 		print_level(level, "{\n");
 		for( size_t i = 0; i < v->members.count; ++i ) {
-			print_level(0, "\"%s\"", v->members.array[i].key);
+			print_level(0, "\"");
+			for( size_t s = 0; s < v->string.len; ++s ) {
+				printf("%c", v->members.array[i].key.start[s]);
+			}
+			printf("\"");
+
 			printf(" : ");
 			dump(v->members.array[i].value, 0);
 
@@ -60,7 +65,13 @@ dump(json_value_t* v, int level) {
 		print_level(level, "\n}");
 		break;
 
-	case JSON_STRING:	print_level(level, "\"%s\"", v->string); break;
+	case JSON_STRING:
+		print_level(level, "\"");
+		for( size_t s = 0; s < v->string.len; ++s ) {
+			printf("%c", v->string.start[s]);
+		}
+		printf("\"");
+		break;
 
 	default: break;
 	}

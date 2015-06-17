@@ -387,7 +387,7 @@ static void yy_destructor(
     case 12: /* pair */
 {
 #line 58 "/home/aifu/Projects/json-parser/json-parser/parser.y"
- free((yypminor->yy13).key); json_free((yypminor->yy13).value); 
+ json_free((yypminor->yy13).value); 
 #line 392 "/home/aifu/Projects/json-parser/json-parser/parser.c"
 }
       break;
@@ -757,7 +757,7 @@ static void yy_reduce(
         break;
       case 11: /* value ::= JSON_TOK_STRING */
 #line 86 "/home/aifu/Projects/json-parser/json-parser/parser.y"
-{ yygotominor.yy14 = json_string(yymsp[0].minor.yy0.string.s, yymsp[0].minor.yy0.string.e); }
+{ yygotominor.yy14 = json_string(yymsp[0].minor.yy0.string); }
 #line 762 "/home/aifu/Projects/json-parser/json-parser/parser.c"
         break;
       case 12: /* value ::= JSON_TOK_NUMBER */

@@ -55,7 +55,7 @@
 %type array	{ json_value_t* }
 %type value	{ json_value_t* }
 
-%destructor pair	{ free($$.key); json_free($$.value); }
+%destructor pair	{ json_free($$.value); }
 %destructor members	{ json_free($$); }
 %destructor elements	{ json_free($$); }
 %destructor object	{ json_free($$); }
@@ -83,7 +83,7 @@ array(A)	::= JSON_TOK_LSQB elements(B) JSON_TOK_RSQB.	{ A = B;	}
 elements(A)	::= value(B).				{ A = json_array(); json_add_element(B, A); }
 elements(A)	::= elements(B) JSON_TOK_COMMA value(C).{ A = json_add_element(C, B); }
 
-value(A)	::= JSON_TOK_STRING(B).			{ A = json_string(B.string.s, B.string.e); }
+value(A)	::= JSON_TOK_STRING(B).			{ A = json_string(B.string); }
 value(A)	::= JSON_TOK_NUMBER(B).			{ A = json_number(B.number);	}
 value(A)	::= JSON_TOK_BOOLEAN(B).		{ A = json_boolean(B.boolean);	}
 value(A)	::= JSON_TOK_NONE.			{ A = json_none();		}

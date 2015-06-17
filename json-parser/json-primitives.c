@@ -33,9 +33,7 @@ json_alloc() {
 json_pair_t
 json_pair		(token_t key, json_value_t* value) {
 	json_pair_t	pair;
-	pair.key	= (char*)malloc(key.string.e - key.string.s + 1);
-	memcpy(pair.key, key.string.s, key.string.e - key.string.s);
-	pair.key[key.string.e - key.string.s]	= '\0';
+	pair.key	= key.string;
 	pair.value	= value;
 	return pair;
 }
@@ -89,12 +87,10 @@ json_number			(double n) {
 }
 
 json_value_t*
-json_string			(const char *s, const char *e) {
+json_string			(string_t str) {
 	json_value_t*	ret = json_alloc();
 	ret->tag	= JSON_STRING;
-	ret->string	= (char*)malloc(e - s + 1);
-	memcpy(ret->string, s, e - s);
-	ret->string[e - s]	= '\0';
+	ret->string	= str;
 
 	return ret;
 }
@@ -111,7 +107,6 @@ json_free(json_value_t* v) {
 	if( v ) {
 		switch( v->tag ) {
 		case JSON_STRING:
-			free(v->string);
 			break;
 
 		case JSON_NUMBER:
@@ -119,7 +114,6 @@ json_free(json_value_t* v) {
 
 		case JSON_OBJECT:
 			for( size_t c = 0; c < v->members.count; ++c ) {
-				free(v->members.array[c].key);
 				json_free(v->members.array[c].value);
 			}
 			json_pair_array_release(&(v->members));

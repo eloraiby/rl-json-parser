@@ -236,8 +236,8 @@ static token_t
 token_to_string(const char* ts, const char* te) {
 	token_t	t;
 	t.tok_type	= JSON_TOK_STRING;
-	t.string.s	= ts;
-	t.string.e	= te;
+	t.string.start	= ts;
+	t.string.len	= te - ts;
 	return t;
 }
 

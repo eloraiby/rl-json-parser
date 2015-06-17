@@ -91,9 +91,16 @@ typedef enum {
 struct json_value_s;
 
 typedef struct {
-	char*			key;
+	const char*	start;
+	size_t		len;
+} string_t;
+
+typedef struct {
+	string_t		key;
 	struct json_value_s*	value;
 } json_pair_t;
+
+
 
 DECLARE_ARRAY(json_pair_array, json_pair_t)
 DECLARE_ARRAY(json_value_array, struct json_value_s*)
@@ -103,8 +110,8 @@ typedef struct json_value_s {
 
 	union {
 		bool			boolean;
-		char*			string;
 		double			number;
+		string_t		string;
 		json_pair_t		pair;
 		json_pair_array_t	members;
 		json_value_array_t	array;
