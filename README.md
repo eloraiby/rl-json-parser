@@ -2,6 +2,22 @@
 
 A small, lightweight C99 Ragel/Lemon json parser, easy to use and customize.
 
+Dependencies
+------------
+On windows, download:
+
+![ragel](https://github.com/eloraiby/ragel-windows) as Lexer generator
+
+![lemon](https://github.com/eloraiby/lemon-windows) as Parser generator
+
+Both should be in your system path.
+
+
+On *Nix based system both can be downloaded using the default package manager or can be built from source.
+
+For simplicity, I use qmake/Qt Creator as the cross platform build system/IDE. The code can be easily ported to other systems.
+
+
 Usage
 -----
 Just include ```json-parser.h``` and call:
