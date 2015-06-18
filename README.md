@@ -52,5 +52,5 @@ License
 
 Roughly speaking: it means that you can statically link with the code but you are obliged to make open your bug fixes and/or enhancement to the json-parser code.
 
-Tests comes from JsonChecker and nativejson-benchmark. They are copyrighted to their respective authors.
+Tests come from JsonChecker and nativejson-benchmark. They are copyrighted to their respective authors.
 
