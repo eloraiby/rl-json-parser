@@ -79,20 +79,26 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 		'null'						{ ADVANCE( none,    JSON_TOK_NONE    );};
 
 		# string.
-		( '"' ( [^"\\\n] | /\\./ )* '"' )		{ ADVANCE_STRING(JSON_TOK_STRING); };
+		( '"' ( [^"\\\n] | /\\./ )* '"' )		{
+									for( i = ts; i < te; ++i ) {
+										if (*i <= 0x1F) {
+											ret.status = JSON_INVALID_STRING;
+											cs = scanner_error;
+											break;
+										}
+									}
+
+									if( ret.status != JSON_INVALID_STRING ) {
+										ADVANCE_STRING(JSON_TOK_STRING);
+									}
+								};
 
 
 		# Integer decimal. Leading part buffered by float.
 		( [+\-]? ( '0' | [1-9] [0-9]* ) )		{ ADVANCE( number, JSON_TOK_NUMBER ); };
 
 		( [+\-]? ( '0' | [1-9] [0-9]* ) [a-zA-Z_]+ )	{
-									fprintf(stderr, "Error: invalid number:\n    ");
 									ret.status	= JSON_INVALID_NUMBER;
-
-									for( i = ts; i < te; ++i ) {
-										fprintf(stderr, "%c", *i);
-									}
-									fprintf(stderr, "\n");
 									cs	= scanner_error;
 								};
 
@@ -110,7 +116,7 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 		'\n'						{ ++line; };
 
 		# Single char symbols.
-		( punct - [_"'] )				{ ret.status = JSON_INVALID_CHARACTER; printf("unexpected character %c\n", *ts); };
+		( punct - [_"'] )				{ ret.status = JSON_INVALID_CHARACTER; cs = scanner_error; };
 
 		# Comments and whitespace.
 		'/*'						{ fgoto c_comment; };
