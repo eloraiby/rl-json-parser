@@ -1,6 +1,14 @@
-# json-parser
+# rl-json-parser
 
 A small, lightweight C99 Ragel/Lemon json parser, easy to use and customize.
+
+Why ?
+-----
+Needed a high performance (no string copy and fewer allocations) and easily customizable json-parser (one that has a grammar). Ended up using ragel and lemon. Both have their advantages and inconvenience, but overall, they present a good solution.
+
+Testing
+-------
+The parser was tested against the JsonChecker and nativejson-benchmark tests. I added another test for unicode (\uXXXX). It was valgrinded for memory leaks during the tests!
 
 Dependencies
 ------------
