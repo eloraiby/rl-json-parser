@@ -1,6 +1,6 @@
 # rl-json-parser
 
-A small, lightweight C99 Ragel/Lemon json parser, easy to use and customize.
+A small, lightweight C99 Ragel/Lemon based json parser, easy to use and customize.
 
 Why ?
 -----
