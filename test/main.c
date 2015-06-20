@@ -169,6 +169,7 @@ fail_tests[] = {
 	"jsonchecker/fail31.json",
 	"jsonchecker/fail32.json",
 	"jsonchecker/fail33.json",
+	"jsonchecker/fail34.json",
 
 };
 

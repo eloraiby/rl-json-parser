@@ -81,10 +81,51 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 		# string.
 		( '"' ( [^"\\\n] | /\\./ )* '"' )		{
 									for( i = ts; i < te; ++i ) {
-										if (*i <= 0x1F) {
+										if( *i <= 0x1F ) {
 											ret.status = JSON_INVALID_STRING;
 											cs = scanner_error;
 											break;
+										} else if( *i == '\\' ) {
+											if( i + 1 < te - 1) {
+												switch( *(i + 1) ) {
+												case '"':
+												case '\\':
+												case '/':
+												case 'b':
+												case 'f':
+												case 'n':
+												case 'r':
+												case 't':
+													++i;
+													break;
+												case 'u':
+													if( i + 6 > te - 1 ) {
+														ret.status = JSON_INVALID_STRING;
+														cs = scanner_error;
+														i = te;
+													} else {
+														const char* e = i + 6;
+														i += 2;
+														for(; i < e; ++i ) {
+															if( (*i < '0' || *i > '9') && (*i < 'A' || *i > 'F') && (*i < 'a' || *i > 'f') ) {
+																ret.status = JSON_INVALID_STRING;
+																cs = scanner_error;
+																i = te;
+																break;
+															}
+														}
+													}
+													break;
+												default:
+													ret.status = JSON_INVALID_STRING;
+													cs = scanner_error;
+													i = te;
+												}
+											} else {
+												ret.status = JSON_INVALID_STRING;
+												cs = scanner_error;
+												i = te;
+											}
 										}
 									}
 
