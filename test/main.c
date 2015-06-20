@@ -48,7 +48,7 @@ dump(json_value_t* v, int level) {
 		print_level(level, "{\n");
 		for( size_t i = 0; i < v->members.count; ++i ) {
 			print_level(0, "\"");
-			for( size_t s = 0; s < v->string.len; ++s ) {
+			for( size_t s = 0; s < v->members.array[i].key.len; ++s ) {
 				printf("%c", v->members.array[i].key.start[s]);
 			}
 			printf("\"");

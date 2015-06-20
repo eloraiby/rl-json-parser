@@ -402,7 +402,7 @@ _eof_trans:
 	break;
 	case 2:
 #line 80 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
-	{ ADVANCE_STRING(JSON_TOK_STRING); string_s = NULL; string_e = NULL; {cs = 21; goto _again;} }
+	{ string_e = ts; ADVANCE_STRING(JSON_TOK_STRING); string_s = NULL; string_e = NULL; {cs = 21; goto _again;} }
 	break;
 	case 5:
 #line 1 "NONE"
@@ -410,11 +410,11 @@ _eof_trans:
 	break;
 	case 6:
 #line 74 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
-	{te = p+1;{ ++string_e; }}
+	{te = p+1;{ }}
 	break;
 	case 7:
 #line 75 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
-	{te = p+1;{ ++string_e; }}
+	{te = p+1;{ }}
 	break;
 	case 8:
 #line 76 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
@@ -429,7 +429,7 @@ _eof_trans:
 	break;
 	case 10:
 #line 85 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
-	{te = p+1;{ ++string_e; }}
+	{te = p+1;{ }}
 	break;
 	case 11:
 #line 81 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
@@ -479,7 +479,7 @@ _eof_trans:
 	break;
 	case 21:
 #line 94 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"
-	{te = p+1;{ string_s = ts + 1; string_e = ts + 1; {cs = 32; goto _again;} }}
+	{te = p+1;{ string_s = te; {cs = 32; goto _again;} }}
 	break;
 	case 22:
 #line 109 "/home/aifu/Projects/json-parser/json-parser/lexer.rl"

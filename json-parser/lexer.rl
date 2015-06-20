@@ -71,18 +71,18 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 	ju		= [0-9a-fA-F];
 
 	j_string	:= |*
-		('\\' ('"' | '\\' | '/' | 'b' | 'f' | 'n' | 'r' | 't'))	{ ++string_e; };
-		('\\u' ju ju ju ju)					{ ++string_e; };
+		('\\' ('"' | '\\' | '/' | 'b' | 'f' | 'n' | 'r' | 't'))	{ };
+		('\\u' ju ju ju ju)					{ };
 		(cntrl)							{
 										ret.status = JSON_INVALID_STRING;
 										cs = scanner_error;
 									};
-		'"'							@{ ADVANCE_STRING(JSON_TOK_STRING); string_s = NULL; string_e = NULL; fgoto main; };
+		'"'							@{ string_e = ts; ADVANCE_STRING(JSON_TOK_STRING); string_s = NULL; string_e = NULL; fgoto main; };
 		'\n' | '\\'						{
 										ret.status = JSON_INVALID_STRING;
 										cs = scanner_error;
 									};
-		any							{ ++string_e; };
+		any							{ };
 	*|;
 
 	main := |*
@@ -91,7 +91,7 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 		'null'						{ ADVANCE( none,    JSON_TOK_NONE    );};
 
 		# string.
-		'"'						{ string_s = ts + 1; string_e = ts + 1; fgoto j_string; };
+		'"'						{ string_s = te; fgoto j_string; };
 
 
 		# Integer decimal. Leading part buffered by float.
