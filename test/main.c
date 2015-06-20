@@ -82,6 +82,7 @@ test_simple_object() {
 	const char*		json_str	= "{\n\"key\":\"value\"\n}";
 	json_value_t*	val			= json_parse(json_str).value;
 	dump(val, 0);
+	printf("\n");
 	json_free(val);
 }
 
@@ -90,6 +91,7 @@ test_simple_object2() {
 	const char*		json_str	= "{\n\"key\":\"value\",\n\"key2\":\"value2\"\n,\"key3\":23.4}";
 	json_value_t*	val			= json_parse(json_str).value;
 	dump(val, 0);
+	printf("\n");
 	json_free(val);
 }
 
