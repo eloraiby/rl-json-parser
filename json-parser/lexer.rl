@@ -41,16 +41,11 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 			} else cs	= scanner_error
 
 #define ADVANCE_STRING(T) if( parser_.error_code == 0) { \
-				const char* tmp_te = te; \
-				const char* tmp_ts = ts; \
-				++ts; --te; \
-				parser_.token_start	= ts; \
-				parser_.token_end	= te; \
+				parser_.token_start	= string_s; \
+				parser_.token_end	= string_e; \
 				parser_.token_line	= line; \
-				token_t tmpc = token_to_string(ts, te); \
+				token_t tmpc = token_to_string(string_s, string_e); \
 				parser_advance(yyparser, T, tmpc, &parser_); \
-				ts	= tmp_ts; \
-				te	= tmp_te; \
 			} else cs	= scanner_error
 
 #define ADVANCE_TOKEN(A)	if( parser_.error_code == 0) { token_t t; t.tok_type = A; parser_advance(yyparser, A, t, &parser_); } else p = pe - 1
@@ -73,66 +68,30 @@ extern void	parser_advance(void *yyp, int yymajor, token_t yyminor, json_parser_
 
 	c_comment	:= (any | '\n'@inc_line)* :>> '*/' @{ fgoto main; };
 
+	ju		= [0-9a-fA-F];
+
+	j_string	:= |*
+		('\\' ('"' | '\\' | '/' | 'b' | 'f' | 'n' | 'r' | 't'))	{ ++string_e; };
+		('\\u' ju ju ju ju)					{ ++string_e; };
+		(cntrl)							{
+										ret.status = JSON_INVALID_STRING;
+										cs = scanner_error;
+									};
+		'"'							@{ ADVANCE_STRING(JSON_TOK_STRING); string_s = NULL; string_e = NULL; fgoto main; };
+		'\n' | '\\'						{
+										ret.status = JSON_INVALID_STRING;
+										cs = scanner_error;
+									};
+		any							{ ++string_e; };
+	*|;
+
 	main := |*
 		'true'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
 		'false'						{ ADVANCE( boolean, JSON_TOK_BOOLEAN );};
 		'null'						{ ADVANCE( none,    JSON_TOK_NONE    );};
 
 		# string.
-		( '"' ( [^"\\\n] | /\\./ )* '"' )		{
-									for( i = ts; i < te; ++i ) {
-										if( *i <= 0x1F ) {
-											ret.status = JSON_INVALID_STRING;
-											cs = scanner_error;
-											break;
-										} else if( *i == '\\' ) {
-											if( i + 1 < te - 1) {
-												switch( *(i + 1) ) {
-												case '"':
-												case '\\':
-												case '/':
-												case 'b':
-												case 'f':
-												case 'n':
-												case 'r':
-												case 't':
-													++i;
-													break;
-												case 'u':
-													if( i + 6 > te - 1 ) {
-														ret.status = JSON_INVALID_STRING;
-														cs = scanner_error;
-														i = te;
-													} else {
-														const char* e = i + 6;
-														i += 2;
-														for(; i < e; ++i ) {
-															if( (*i < '0' || *i > '9') && (*i < 'A' || *i > 'F') && (*i < 'a' || *i > 'f') ) {
-																ret.status = JSON_INVALID_STRING;
-																cs = scanner_error;
-																i = te;
-																break;
-															}
-														}
-													}
-													break;
-												default:
-													ret.status = JSON_INVALID_STRING;
-													cs = scanner_error;
-													i = te;
-												}
-											} else {
-												ret.status = JSON_INVALID_STRING;
-												cs = scanner_error;
-												i = te;
-											}
-										}
-									}
-
-									if( ret.status != JSON_INVALID_STRING ) {
-										ADVANCE_STRING(JSON_TOK_STRING);
-									}
-								};
+		'"'						{ string_s = ts + 1; string_e = ts + 1; fgoto j_string; };
 
 
 		# Integer decimal. Leading part buffered by float.
@@ -230,6 +189,8 @@ json_parse(const char* str)
 	const char*	ts	= str;
 	const char*	te	= str;
 	const char*	i	= NULL;
+	const char*	string_s	= NULL;
+	const char*	string_e	= NULL;
 
 	const char*	p	= str;
 	const char*	pe	= p + strlen(str) + 1;
