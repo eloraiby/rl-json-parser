@@ -110,31 +110,30 @@ load_file(const char* filename) {
 	}
 }
 
-void
-test_twitter() {
-	char*	twitter	= load_file("twitter.json");
-	json_value_t*	val	= json_parse(twitter).value;
-	json_free(val);
-	free(twitter);
-}
+static const char*
+pass_tests[] = {
+	"twitter.json",
+	"canada.json",
+	"citm_catalog.json",
+};
 
 void
-test_canada() {
-	char*	canada	= load_file("canada.json");
-	json_value_t*	val	= json_parse(canada).value;
-	json_free(val);
-	free(canada);
+test_pass() {
+	for( size_t t = 0; t < sizeof(pass_tests) / sizeof(char*); ++t ) {
+		char*	test = load_file(pass_tests[t]);
+		json_value_t*	val	= json_parse(test).value;
+		if(val != NULL) {
+			fprintf(stderr, "test %s is passing\n", pass_tests[t]);
+			json_free(val);
+		} else {
+			fprintf(stderr, "test %s failing!\n", pass_tests[t]);
+		}
+		free(test);
+	}
 }
 
-void
-test_citm_catalog() {
-	char*	citm_catalog	= load_file("citm_catalog.json");
-	json_value_t*	val	= json_parse(citm_catalog).value;
-	json_free(val);
-	free(citm_catalog);
-}
 
-static char*
+static const char*
 fail_tests[] = {
 	"jsonchecker/fail01_EXCLUDE.json",
 	"jsonchecker/fail02.json",
@@ -170,6 +169,7 @@ fail_tests[] = {
 	"jsonchecker/fail32.json",
 	"jsonchecker/fail33.json",
 	"jsonchecker/fail34.json",
+	"jsonchecker/fail35.json",
 
 };
 
@@ -182,6 +182,8 @@ test_fail() {
 		if(val != NULL) {
 			fprintf(stderr, "test %s is passing! should be failing!\n", fail_tests[t]);
 			json_free(val);
+		} else {
+			fprintf(stderr, "test %s is passing by failing\n", fail_tests[t]);
 		}
 		free(test);
 	}
@@ -191,9 +193,7 @@ int
 main(int argc, char* argv[]) {
 	test_simple_object();
 	test_simple_object2();
-	test_twitter();
-	test_canada();
-	test_citm_catalog();
+	test_pass();
 	test_fail();
 	return 0;
 }

@@ -62,4 +62,5 @@ OTHER_FILES += \
     jsonchecker/pass01.json \
     jsonchecker/pass02.json \
     jsonchecker/pass03.json \
-    jsonchecker/readme.txt
+    jsonchecker/readme.txt \
+    jsonchecker/fail35.json
