@@ -74,7 +74,7 @@ License
  <http://www.gnu.org/licenses/>.
 ```
 
-Roughly speaking: it means that you can statically link with the code but you are obliged to make open your bug fixes and/or enhancement to the json-parser code.
+Roughly speaking: it means that you can statically link with the code but you are obliged to make open your bug fixes and/or enhancement to the rl-json-parser code.
 
 Tests come from JsonChecker and nativejson-benchmark. They are copyrighted to their respective authors.
 
