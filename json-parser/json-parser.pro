@@ -17,7 +17,7 @@ lexer.commands = ragel -C -o $$PWD/lexer.c $$PWD/lexer.rl
 lexer.depends =
 
 parser.target = parser.c
-parser.commands = lemon -T$$PWD/lempar.c_template $$PWD/parser.y
+parser.commands = lemon $$PWD/parser.y
 
 QMAKE_EXTRA_TARGETS	+= lexer parser
 
@@ -29,7 +29,7 @@ SOURCES += \
     json-primitives.c
 
 HEADERS += \
-	json-parser.h \
+    json-parser.h \
     parser.h \
     private/private.h
 
@@ -39,6 +39,5 @@ unix {
 }
 
 DISTFILES += \
-	lexer.rl \
-	lempar.c_template \
+    lexer.rl \
     parser.y
